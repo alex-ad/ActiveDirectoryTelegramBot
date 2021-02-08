@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.AD;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Bot;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Config;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Logger;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Service
 {
@@ -10,8 +14,12 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Service
 	{
 		private static List<Decorator> _services;
 		private static App _instance;
+		private static IComponent[] _decorators;
+		private static ILogger _logger;
+		private static IConfig _config;
+		private static IAdFacade _ad;
 
-		public static App Instance(params IComponent[] decorators)
+		public static App Instance()
 		{
 			_instance = _instance ?? new App();
 			_services = new List<Decorator>();
@@ -30,8 +38,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Service
 			}
 
 			service.Component = _services.LastOrDefault();
-			//_services.Add(service);
-			_services.Insert(0, service);
+			_services.Add(service);
 		}
 
 		public Decorator GetService<T>() where T : Decorator
@@ -39,9 +46,16 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Service
 			return _services.OfType<T>()?.FirstOrDefault();
 		}
 
-		public void Init()
+		public void Init(params IComponent[] decorators)
 		{
 			_services.LastOrDefault()?.Init();
+
+			_decorators = decorators;
+			_logger = _decorators?.OfType<ILogger>().FirstOrDefault();
+			_config = _decorators?.OfType<IConfig>().FirstOrDefault();
+			_ad = _decorators?.OfType<IAdFacade>().FirstOrDefault();
+
+			new TelegramBot(_logger, _ad, _config);
 		}
 	}
 }

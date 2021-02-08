@@ -10,40 +10,47 @@ using AlexAd.ActiveDirectoryTelegramBot.Bot.Service;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 {
-	public class AdFacade : Decorator
+	public class Ad : Decorator, IAdFacade
 	{
 		private static IComponent[] _decorators;
 		private static ILogger _logger;
 		private static AdReader _ad;
 		private static AdConnection _adConnection;
 		private static PrincipalContext _adContext;
-		private static AdFacade _instance;
+		private static Ad _instance;
 		private static IConfig _config;
 
-		protected AdFacade() { }
+		public AdReader Request => _ad;
 
-		public static AdFacade Instance(params IComponent[] decorators)
+		protected Ad() { }
+
+		public static Ad Instance()
 		{
-			_instance = _instance ?? new AdFacade();
+			_instance = _instance ?? new Ad();
+			return _instance;
+		}
+
+		public override void Init(params IComponent[] decorators)
+		{
+			base.Init();
+
 			_decorators = decorators;
 			_logger = _decorators?.OfType<ILogger>().FirstOrDefault();
 			_config = _decorators?.OfType<IConfig>().FirstOrDefault();
+			_logger?.Log("Initializing Service: Active Directory...", OutputTarget.Console);
 
-			if (_ad == null)
+			Connect();
+		}
+
+		public void Connect()
+		{
+			if ( _ad == null )
 			{
 				_adConnection = AdConnection.Instance(_logger, _config);
 				if ( _adConnection != null )
 					if ( _adConnection.TryConnect(out _adContext) )
 						_ad = new AdReader(_adContext);
 			}
-
-			return _instance;
-		}
-
-		public override void Init()
-		{
-			_logger?.Log("Initialize Service: Active Directory", OutputTarget.Console);
-			base.Init();
 		}
 	}
 }

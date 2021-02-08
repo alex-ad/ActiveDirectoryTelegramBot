@@ -45,6 +45,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot
 		private static AdSnapshot _adSnapshot;
 		private static AdNotifySender _adNotifySender;*/
 		private static App _services;
+		private static Logger.Logger _logger;
 
 		// TODO Сделать гибкую инициалтзацию сервисов (Декоратор?)
 		public static void Initialize()
@@ -55,10 +56,18 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot
 			_config = Config.Config.Instance(_logger);*/
 
 			_services.Add(Logger.Logger.Instance());
-			_services.Add(Config.Config.Instance(_services.GetService<Logger.Logger>()));
-			_services.Add(AdFacade.Instance(_services.GetService<Logger.Logger>(), _services.GetService<Config.Config>()));
+			_services.Add(Config.Config.Instance());
+			_services.Add(Ad.Instance());
 
-			_services.Init();
+			_logger = (Logger.Logger)_services.GetService<Logger.Logger>();
+			
+			_services.Init(
+				_logger,
+				_services.GetService<Config.Config>(),
+				_services.GetService<Ad>()
+				);
+			
+			_logger.Log("All services are initialized. See log above for more information.", OutputTarget.Console);
 
 			/*InitLogger()
 				.InitConfig()

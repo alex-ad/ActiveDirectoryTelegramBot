@@ -10,6 +10,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Service
 	{
 		public IComponent Component { protected get; set; }
 
-		public virtual void Init() => Component?.Init();
+		public virtual void Init(params IComponent[] decorators) => Component?.Init(decorators);
 	}
 }

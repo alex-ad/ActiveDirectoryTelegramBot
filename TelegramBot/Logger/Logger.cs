@@ -21,16 +21,16 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Logger
 
 		protected Logger() { }
 
-		public static Logger Instance(params IComponent[] decorators)
+		public static Logger Instance()
 		{
 			_instance = _instance ?? new Logger();
 			return _instance;
 		}
 
-		public override void Init()
+		public override void Init(params IComponent[] decorators)
 		{
-			Log("Initialize Service: Logger", OutputTarget.Console);
 			base.Init();
+			Log("Initializing Service: Logger...", OutputTarget.Console);
 		}
 
 		public void Log(string message, OutputTarget outputTarget)

@@ -8,6 +8,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Service
 {
 	public interface IComponent
 	{
-		void Init();
+		void Init(params IComponent[] decorators);
 	}
 }

@@ -29,14 +29,14 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
                 if (principalContext == null ||
                     !principalContext.ValidateCredentials(_config.UserName, _config.UserPassword))
                 {
-	                _logger.Log($"Active Directory Connecting Error. Check Identity Params.", OutputTarget.Console & OutputTarget.File);
+	                _logger.Log($"Active Directory Connecting Error. Check Identity Params.", OutputTarget.Console | OutputTarget.File);
 	                return false;
                 }
             }
             catch (Exception e)
             {
 	            principalContext = null;
-                _logger.Log($"Active Directory Initializing Error: {e.Message}", OutputTarget.Console & OutputTarget.File);
+                _logger.Log($"Active Directory Initializing Error: {e.Message}", OutputTarget.Console | OutputTarget.File);
                 return false;
             }
             

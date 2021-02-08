@@ -5,25 +5,27 @@ using System.Text;
 using System.Threading.Tasks;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.AD;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Config;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Logger;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Service;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 {
-	public class TelegramBot : IDisposable
+	public class TelegramBot : IDisposable, IComponent
 	{
 		private static TelegramBotClient _bot;
-		private static AdReader _ad;
+		private static Ad _ad;
 		private static Logger.Logger _logger;
 		private static Config.Config _config;
 
-		public TelegramBot(Logger.Logger logger, AdReader adReader, Config.Config config)
+		public TelegramBot(ILogger logger, IAdFacade adReader, IConfig config)
 		{
-			_ad = adReader;
-			_logger = logger;
-			_config = config;
+			_ad = (Ad)adReader;
+			_logger = (Logger.Logger)logger;
+			_config = (Config.Config)config;
 
 			_logger.Log("Starting Bot", OutputTarget.Console & OutputTarget.File);
 
@@ -40,7 +42,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 		{
 			if (e.Message?.Type != MessageType.Text)
 				return;
-			var msg = new Messenger(_ad, e.Message.From, _config);
+			var msg = new Messenger(_ad.Request, e.Message.From, _config);
 
 			try
 			{
@@ -128,6 +130,11 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 		{
 			_logger.Log("OMG! The killed Bot. You Bastards!", OutputTarget.Console & OutputTarget.File);
 			_bot.StopReceiving();
+		}
+
+		public void Init(params IComponent[] decorators)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

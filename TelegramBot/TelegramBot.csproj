@@ -79,7 +79,7 @@
     <Compile Include="ADSnapshot\AdSnapshot.cs" />
     <Compile Include="ADSnapshot\AdType.cs" />
     <Compile Include="AD\AdConnection.cs" />
-    <Compile Include="AD\AdFacade.cs" />
+    <Compile Include="AD\Ad.cs" />
     <Compile Include="AD\AdReader.cs" />
     <Compile Include="AD\AdTree.cs" />
     <Compile Include="AD\IAdFacade.cs" />

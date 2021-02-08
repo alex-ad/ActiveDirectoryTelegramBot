@@ -26,25 +26,28 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Config
 
 		protected Config() { }
 
-		public static Config Instance(params IComponent[] decorators)
+		public static Config Instance()
 		{
 			_instance = _instance ?? new Config();
-			_decorators = decorators;
-			_logger = _decorators?.OfType<ILogger>().FirstOrDefault();
+			
+
 			return _instance;
 		}
 
-		public override void Init()
+		public override void Init(params IComponent[] decorators)
 		{
-			_logger?.Log("Initialize Service: Config", OutputTarget.Console);
 			base.Init();
+			_decorators = decorators;
+			_logger = _decorators?.OfType<ILogger>().FirstOrDefault();
+			_logger?.Log("Initializing Service: Config...", OutputTarget.Console);
+			TryGetParamsFromFile();
 		}
 
 		public bool TryGetParamsFromFile()
 		{
 			if ( !File.Exists("Config.config") )
 			{
-				_logger?.Log("Config.config not found. Ensure, it is exists in the application directory.", OutputTarget.Console & OutputTarget.File);
+				_logger?.Log("Config not found. Ensure, it is exists in the application directory.", OutputTarget.Console & OutputTarget.File);
 				return false;
 			}
 
@@ -60,26 +63,26 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Config
 
 			} catch (XPathException e)
 			{
-				_logger?.Log($"Error occured on reading params from Config.config: {e.Message}", OutputTarget.Console & OutputTarget.File);
+				_logger?.Log($"Error occured on reading params from Config: {e.Message}", OutputTarget.Console & OutputTarget.File);
 				return false;
 			} catch (XmlException e)
 			{
-				_logger?.Log($"Error occured on reading params Config.config: {e.Message}", OutputTarget.Console & OutputTarget.File);
+				_logger?.Log($"Error occured on reading params Config: {e.Message}", OutputTarget.Console & OutputTarget.File);
 				return false;
 			} catch (IOException e)
 			{
-				_logger?.Log($"Error occured on reading file Config.config: {e.Message}", OutputTarget.Console & OutputTarget.File);
+				_logger?.Log($"Error occured on reading file Config: {e.Message}", OutputTarget.Console & OutputTarget.File);
 				return false;
 			} catch (UnauthorizedAccessException e)
 			{
-				_logger?.Log($"Error occured on reading file Config.config: {e.Message}", OutputTarget.Console & OutputTarget.File);
+				_logger?.Log($"Error occured on reading file Config: {e.Message}", OutputTarget.Console & OutputTarget.File);
 				return false;
 			}
 
 			if ( string.IsNullOrEmpty(UserName) || string.IsNullOrEmpty(UserPassword) ||
 			     string.IsNullOrEmpty(ServerAddress) || string.IsNullOrEmpty(TelegramBotToken) )
 			{
-				_logger?.Log($"Ensure, Config.config has correct parameters inside.", OutputTarget.Console & OutputTarget.File);
+				_logger?.Log($"Ensure, Config has correct parameters inside.", OutputTarget.Console & OutputTarget.File);
 				return false;
 			}
 
