@@ -29,8 +29,8 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Logger
 
 		public override void Init()
 		{
-			base.Init();
 			Log("Initialize Service: Logger", OutputTarget.Console);
+			base.Init();
 		}
 
 		public void Log(string message, OutputTarget outputTarget)

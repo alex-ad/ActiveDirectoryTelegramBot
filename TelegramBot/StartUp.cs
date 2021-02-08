@@ -56,6 +56,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot
 
 			_services.Add(Logger.Logger.Instance());
 			_services.Add(Config.Config.Instance(_services.GetService<Logger.Logger>()));
+			_services.Add(AdFacade.Instance(_services.GetService<Logger.Logger>(), _services.GetService<Config.Config>()));
 
 			_services.Init();
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.DirectoryServices.AccountManagement;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Config;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Logger;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
@@ -12,10 +13,10 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 
         protected AdConnection() { }
         
-        public static AdConnection Instance(Logger.Logger logger, Config.Config config)
+        public static AdConnection Instance(ILogger logger, IConfig config)
         {
-	        _logger = logger;
-	        _config = config;
+	        _logger = (Logger.Logger)logger;
+	        _config = (Config.Config)config;
 			_instance = _instance ?? new AdConnection();
 	        return _instance;
         }

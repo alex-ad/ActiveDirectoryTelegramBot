@@ -79,8 +79,10 @@
     <Compile Include="ADSnapshot\AdSnapshot.cs" />
     <Compile Include="ADSnapshot\AdType.cs" />
     <Compile Include="AD\AdConnection.cs" />
+    <Compile Include="AD\AdFacade.cs" />
     <Compile Include="AD\AdReader.cs" />
     <Compile Include="AD\AdTree.cs" />
+    <Compile Include="AD\IAdFacade.cs" />
     <Compile Include="Bot\Commands.cs" />
     <Compile Include="Bot\Extensions.cs" />
     <Compile Include="Bot\Messenger.cs" />

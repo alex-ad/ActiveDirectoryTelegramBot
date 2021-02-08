@@ -36,8 +36,8 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Config
 
 		public override void Init()
 		{
-			base.Init();
 			_logger?.Log("Initialize Service: Config", OutputTarget.Console);
+			base.Init();
 		}
 
 		public bool TryGetParamsFromFile()

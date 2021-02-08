@@ -30,6 +30,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Service
 			}
 
 			service.Component = _services.LastOrDefault();
+			//_services.Add(service);
 			_services.Insert(0, service);
 		}
 
