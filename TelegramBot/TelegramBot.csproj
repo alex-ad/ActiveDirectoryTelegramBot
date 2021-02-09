@@ -78,6 +78,7 @@
     <Compile Include="ADSnapshot\AdNotifyType.cs" />
     <Compile Include="ADSnapshot\AdSnapshot.cs" />
     <Compile Include="ADSnapshot\AdType.cs" />
+    <Compile Include="ADSnapshot\IAdSnapshotFacade.cs" />
     <Compile Include="AD\AdConnection.cs" />
     <Compile Include="AD\Ad.cs" />
     <Compile Include="AD\AdReader.cs" />

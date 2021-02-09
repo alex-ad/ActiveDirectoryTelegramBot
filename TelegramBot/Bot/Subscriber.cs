@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.AD;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Config;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Models;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
@@ -15,10 +16,10 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 		private readonly Config.Config _config;
 		private readonly AdReader _ad;
 
-		public Subscriber(int userId, Config.Config config, AdReader ad)
+		public Subscriber(int userId, IConfig config, AdReader ad)
 		{
 			_telegramUserId = userId;
-			_config = config;
+			_config = (Config.Config)config;
 			_ad = ad;
 		}
 

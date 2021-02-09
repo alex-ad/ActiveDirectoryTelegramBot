@@ -36,14 +36,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot
 
 	static class StartUp
 	{
-		/*private static TelegramBot _bot;
-		private static AdReader _ad;
-		private static AdConnection _adConnection;
-		private static Config.Config _config;
-		private static PrincipalContext _adContext;
-		private static Logger.Logger _logger;
-		private static AdSnapshot _adSnapshot;
-		private static AdNotifySender _adNotifySender;*/
 		private static App _services;
 		private static Logger.Logger _logger;
 
@@ -52,12 +44,10 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot
 		{
 			_services = App.Instance();
 
-			/*_logger = Logger.Logger.Instance();
-			_config = Config.Config.Instance(_logger);*/
-
 			_services.Add(Logger.Logger.Instance());
 			_services.Add(Config.Config.Instance());
 			_services.Add(Ad.Instance());
+			_services.Add(AdSnapshot.Instance());
 
 			_logger = (Logger.Logger)_services.GetService<Logger.Logger>();
 			
@@ -68,13 +58,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot
 				);
 			
 			_logger.Log("All services are initialized. See log above for more information.", OutputTarget.Console);
-
-			/*InitLogger()
-				.InitConfig()
-				.InitAd()
-				.InitBot()
-				.InitAdSnapshot()
-				.InitAdNotifySender();*/
 		}
 
 		/*private static bool InitLogger()

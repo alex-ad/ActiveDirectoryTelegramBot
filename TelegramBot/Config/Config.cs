@@ -12,6 +12,9 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Config
 {
 	public class Config : Decorator, IConfig
 	{
+		public delegate void ConfigUpdated(Config config);
+		public static event ConfigUpdated OnConfigUpdated;
+
 		public string ServerAddress { get; private set; }
 		public string DomainAddress { get; private set; }
 		public string UserName { get; private set; }
@@ -36,7 +39,8 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Config
 
 		public override void Init(params IComponent[] decorators)
 		{
-			base.Init();
+			base.Init(decorators);
+
 			_decorators = decorators;
 			_logger = _decorators?.OfType<ILogger>().FirstOrDefault();
 			_logger?.Log("Initializing Service: Config...", OutputTarget.Console);
@@ -85,7 +89,8 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Config
 				_logger?.Log($"Ensure, Config has correct parameters inside.", OutputTarget.Console & OutputTarget.File);
 				return false;
 			}
-
+			
+			OnConfigUpdated?.Invoke(this);
 			return true;
 		}
 

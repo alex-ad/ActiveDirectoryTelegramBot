@@ -9,6 +9,7 @@ using AlexAd.ActiveDirectoryTelegramBot.Bot.Config;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Logger;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Service;
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -17,8 +18,8 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 	public class TelegramBot : IDisposable, IComponent
 	{
 		private static TelegramBotClient _bot;
-		private static Ad _ad;
-		private static Logger.Logger _logger;
+		private static IAdFacade _ad;
+		private static ILogger _logger;
 		private static Config.Config _config;
 
 		public TelegramBot(ILogger logger, IAdFacade adReader, IConfig config)
@@ -27,15 +28,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 			_logger = (Logger.Logger)logger;
 			_config = (Config.Config)config;
 
-			_logger.Log("Starting Bot", OutputTarget.Console & OutputTarget.File);
-
-			_bot = new TelegramBotClient(_config.TelegramBotToken);
-			_bot.OnMessage += Bot_OnMessage;
-
-			var me = _bot.GetMeAsync().Result;
-			Console.WriteLine($"{me.FirstName} is ready for receiving commands");
-
-			_bot.StartReceiving();
+			_logger.Log("Starting Bot", OutputTarget.Console | OutputTarget.File);
 		}
 
 		private static async void Bot_OnMessage(object sender, Telegram.Bot.Args.MessageEventArgs e)
@@ -92,19 +85,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 			return sb.ToString();
 		}
 
-		public async void SendBroadCastMessage(AdNotifyMessage message)
-		{
-			await Task.Run(() =>
-			{
-				var users = _config.TelegramUsers.Where(x => x.Allowed).Select(x => x.TelegramId).ToList();
-				var msg = FormatMessage(message);
-				foreach ( var u in users )
-				{
-					_bot.SendTextMessageAsync(u, msg);
-				}
-			});
-		}
-
 		private string FormatMessage(AdNotifyMessage message)
 		{
 			var msg = new StringBuilder();
@@ -126,15 +106,54 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 			return msg.ToString();
 		}
 
+		public async void SendBroadCastMessage(AdNotifyMessage message)
+		{
+			await Task.Run(() =>
+			{
+				var users = _config.TelegramUsers.Where(x => x.Allowed).Select(x => x.TelegramId).ToList();
+				var msg = FormatMessage(message);
+				foreach ( var u in users )
+				{
+					_bot.SendTextMessageAsync(u, msg);
+				}
+			});
+		}
+
 		public void Dispose()
 		{
-			_logger.Log("OMG! The killed Bot. You Bastards!", OutputTarget.Console & OutputTarget.File);
+			_logger.Log("OMG! The killed Bot. You Bastards!", OutputTarget.Console | OutputTarget.File);
 			_bot.StopReceiving();
 		}
 
 		public void Init(params IComponent[] decorators)
 		{
-			throw new NotImplementedException();
+			Config.Config.OnConfigUpdated += Config_OnConfigUpdated;
+		}
+
+		private void Config_OnConfigUpdated(Config.Config config)
+		{
+			_config = config;
+			if (string.IsNullOrEmpty(_config.TelegramBotToken)) return;
+
+			try
+			{
+				_bot = new TelegramBotClient(_config.TelegramBotToken);
+				_bot.OnMessage += Bot_OnMessage;
+
+				var me = _bot.GetMeAsync().Result;
+				_logger?.Log($"{me.FirstName} is ready for receiving commands", OutputTarget.Console);
+
+				_bot.StartReceiving();
+			}
+			catch (ArgumentException ex)
+			{
+				_logger?.Log($"TelegramBot initializing error: {ex.Message}", OutputTarget.Console);
+			}
+			catch (ApiRequestException ex)
+			{
+				_logger?.Log($"TelegramBot initializing error: {ex.Message}", OutputTarget.Console);
+			}
+			
 		}
 	}
 }

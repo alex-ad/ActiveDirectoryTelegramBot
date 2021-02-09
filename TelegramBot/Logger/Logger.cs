@@ -29,7 +29,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Logger
 
 		public override void Init(params IComponent[] decorators)
 		{
-			base.Init();
+			base.Init(decorators);
 			Log("Initializing Service: Logger...", OutputTarget.Console);
 		}
 

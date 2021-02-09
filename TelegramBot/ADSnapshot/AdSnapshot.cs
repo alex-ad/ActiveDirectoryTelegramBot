@@ -11,11 +11,15 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Bot;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Config;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Logger;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Service;
 
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 {
-	public class AdSnapshot
+	public class AdSnapshot : Decorator, IAdSnapshotFacade
 	{
 		public delegate void AdChanged();
 		public static event AdChanged OnAdChanged;
@@ -26,14 +30,17 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 		private static byte[] _cookie;
 		private static AdSnapshot _instance;
 		private static bool _enabled;
+		
 		private static Config.Config _config;
+		private static ILogger _logger;
+		private static IComponent[] _decorators;
+		private static TelegramBot _bot;
 
 		protected AdSnapshot() { }
 
-		public static AdSnapshot Instance(Config.Config config)
+		public static AdSnapshot Instance()
 		{
 			_instance = _instance ?? new AdSnapshot();
-			_config = _config ?? config;
 			_adNotifyCollection = _adNotifyCollection ?? new AdNotifyCollection();
 			return _instance;
 		}
@@ -166,8 +173,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 				return new AdNotifyMessageUserModified(schemeClass, name, property, val);
 		}
 
-
-
+		// TODO Добавить CancellationToken для остановки/перезапуска
 		public async void RunAsync(int loopPeriodInMilliseconds)
 		{
 			InitializeSnapshot();
@@ -186,6 +192,36 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 		public void Stop()
 		{
 			_enabled = false;
+		}
+
+		public override void Init(params IComponent[] decorators)
+		{
+			base.Init(decorators);
+
+			_decorators = decorators;
+			_logger = _decorators?.OfType<ILogger>().FirstOrDefault();
+			_config = (Config.Config)_decorators?.OfType<IConfig>().FirstOrDefault();
+			//_bot = ;///////////////////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			_logger?.Log("Initializing Service: Active Directory Snapshot...", OutputTarget.Console);
+
+			if (string.IsNullOrEmpty(_config?.ServerAddress) || string.IsNullOrEmpty(_config?.UserName) ||
+			    string.IsNullOrEmpty(_config?.UserPassword)) return;
+
+			Config.Config.OnConfigUpdated += Config_OnConfigUpdated;
+			RunAsync(3000);
+			AdNotifySender.Instance(this, _config, _bot);
+		}
+
+		private void Config_OnConfigUpdated(Config.Config config)
+		{
+			_config = config;
+
+			if ( string.IsNullOrEmpty(_config?.ServerAddress) || string.IsNullOrEmpty(_config?.UserName) ||
+			     string.IsNullOrEmpty(_config?.UserPassword) ) return;
+
+			Stop();
+			RunAsync(3000);
+			AdNotifySender.Instance(this, _config, _bot);
 		}
 	}
 }

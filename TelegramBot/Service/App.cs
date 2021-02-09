@@ -48,14 +48,14 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Service
 
 		public void Init(params IComponent[] decorators)
 		{
-			_services.LastOrDefault()?.Init();
-
 			_decorators = decorators;
-			_logger = _decorators?.OfType<ILogger>().FirstOrDefault();
-			_config = _decorators?.OfType<IConfig>().FirstOrDefault();
-			_ad = _decorators?.OfType<IAdFacade>().FirstOrDefault();
+			_logger = _decorators?.OfType<Logger.Logger>().FirstOrDefault();
+			_config = _decorators?.OfType<Config.Config>().FirstOrDefault();
+			_ad = _decorators?.OfType<Ad>().FirstOrDefault();
 
-			new TelegramBot(_logger, _ad, _config);
+			_services[0].Component = new TelegramBot(_logger, _ad, _config);
+
+			_services.LastOrDefault()?.Init(decorators);
 		}
 	}
 }

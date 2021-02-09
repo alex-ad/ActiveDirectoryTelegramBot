@@ -32,25 +32,29 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 
 		public override void Init(params IComponent[] decorators)
 		{
-			base.Init();
+			base.Init(decorators);
 
 			_decorators = decorators;
 			_logger = _decorators?.OfType<ILogger>().FirstOrDefault();
 			_config = _decorators?.OfType<IConfig>().FirstOrDefault();
 			_logger?.Log("Initializing Service: Active Directory...", OutputTarget.Console);
 
+			Config.Config.OnConfigUpdated += Config_OnConfigUpdated;
+			Connect();
+		}
+
+		private void Config_OnConfigUpdated(Config.Config config)
+		{
+			_config = config;
 			Connect();
 		}
 
 		public void Connect()
 		{
-			if ( _ad == null )
-			{
-				_adConnection = AdConnection.Instance(_logger, _config);
-				if ( _adConnection != null )
-					if ( _adConnection.TryConnect(out _adContext) )
-						_ad = new AdReader(_adContext);
-			}
+			_adConnection = AdConnection.Instance(_logger, _config);
+			if ( _adConnection != null )
+				if ( _adConnection.TryConnect(out _adContext) )
+					_ad = new AdReader(_adContext);
 		}
 	}
 }

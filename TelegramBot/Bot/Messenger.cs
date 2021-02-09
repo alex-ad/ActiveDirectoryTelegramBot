@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.AD;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Config;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Models;
 using Telegram.Bot.Types;
 
@@ -16,9 +17,9 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 		private readonly Response _response;
 		private readonly AdReader _ad;
 		private readonly User _telegramUser;
-		private readonly Config.Config _config;
+		private readonly IConfig _config;
 
-		public Messenger(AdReader ad, User telegramUser, Config.Config config)
+		public Messenger(AdReader ad, User telegramUser, IConfig config)
 		{
 			_response = new Response();
 			_ad = ad;
