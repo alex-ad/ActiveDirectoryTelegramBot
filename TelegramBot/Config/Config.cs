@@ -10,7 +10,7 @@ using AlexAd.ActiveDirectoryTelegramBot.Bot.Service;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Config
 {
-	public class Config : Decorator, IConfig
+	internal class Config : Decorator, IConfig
 	{
 		public delegate void ConfigUpdated(Config config);
 		public static event ConfigUpdated OnConfigUpdated;

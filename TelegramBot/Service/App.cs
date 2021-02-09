@@ -17,7 +17,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Service
 		private static IComponent[] _decorators;
 		private static ILogger _logger;
 		private static IConfig _config;
-		private static IAdFacade _ad;
+		private static IAdReader _ad;
 
 		public static App Instance()
 		{

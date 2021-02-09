@@ -12,7 +12,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Logger
 	}
 
 	// TODO Назначение вывода логов брать из конфига
-	public class Logger : Decorator, ILogger
+	internal class Logger : Decorator, ILogger
 	{
 		private static Logger _instance;
 

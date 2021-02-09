@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 {
-	public interface IAdSnapshotFacade
+	internal interface IAdSnapshot
 	{
 		void RunAsync(int loopPeriodInMilliseconds);
 	}

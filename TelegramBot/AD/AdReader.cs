@@ -3,7 +3,7 @@ using System.DirectoryServices.AccountManagement;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 {
-	public class AdReader
+	internal class AdReader
 	{
 		private static PrincipalContext _adContext;
 

@@ -78,12 +78,12 @@
     <Compile Include="ADSnapshot\AdNotifyType.cs" />
     <Compile Include="ADSnapshot\AdSnapshot.cs" />
     <Compile Include="ADSnapshot\AdType.cs" />
-    <Compile Include="ADSnapshot\IAdSnapshotFacade.cs" />
+    <Compile Include="ADSnapshot\IAdSnapshot.cs" />
     <Compile Include="AD\AdConnection.cs" />
     <Compile Include="AD\Ad.cs" />
     <Compile Include="AD\AdReader.cs" />
     <Compile Include="AD\AdTree.cs" />
-    <Compile Include="AD\IAdFacade.cs" />
+    <Compile Include="AD\IAdReader.cs" />
     <Compile Include="Bot\Commands.cs" />
     <Compile Include="Bot\Extensions.cs" />
     <Compile Include="Bot\Messenger.cs" />

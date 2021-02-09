@@ -19,7 +19,7 @@ using AlexAd.ActiveDirectoryTelegramBot.Bot.Service;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 {
-	public class AdSnapshot : Decorator, IAdSnapshotFacade
+	public class AdSnapshot : Decorator, IAdSnapshot
 	{
 		public delegate void AdChanged();
 		public static event AdChanged OnAdChanged;
@@ -31,10 +31,9 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 		private static AdSnapshot _instance;
 		private static bool _enabled;
 		
-		private static Config.Config _config;
+		private static IConfig _config;
 		private static ILogger _logger;
 		private static IComponent[] _decorators;
-		private static TelegramBot _bot;
 
 		protected AdSnapshot() { }
 
@@ -201,7 +200,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 			_decorators = decorators;
 			_logger = _decorators?.OfType<ILogger>().FirstOrDefault();
 			_config = (Config.Config)_decorators?.OfType<IConfig>().FirstOrDefault();
-			//_bot = ;///////////////////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			_logger?.Log("Initializing Service: Active Directory Snapshot...", OutputTarget.Console);
 
 			if (string.IsNullOrEmpty(_config?.ServerAddress) || string.IsNullOrEmpty(_config?.UserName) ||
@@ -209,10 +207,10 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 
 			Config.Config.OnConfigUpdated += Config_OnConfigUpdated;
 			RunAsync(3000);
-			AdNotifySender.Instance(this, _config, _bot);
+			AdNotifySender.Instance(this, _config);
 		}
 
-		private void Config_OnConfigUpdated(Config.Config config)
+		private void Config_OnConfigUpdated(IConfig config)
 		{
 			_config = config;
 
@@ -221,7 +219,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 
 			Stop();
 			RunAsync(3000);
-			AdNotifySender.Instance(this, _config, _bot);
+			AdNotifySender.Instance(this, _config);
 		}
 	}
 }

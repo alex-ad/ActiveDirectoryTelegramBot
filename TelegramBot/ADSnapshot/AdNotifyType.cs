@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 {
-	public static class AdNotifyType
+	internal static class AdNotifyType
 	{
 		public enum ChangingObjectType
 		{

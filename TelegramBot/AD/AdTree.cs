@@ -7,7 +7,7 @@ using AlexAd.ActiveDirectoryTelegramBot.Bot.Models;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 {
-    public static class AdTree
+	internal static class AdTree
     {
         public static UserPrincipal GetUserObjectByLogin(this PrincipalContext principalContext, string accountName) =>
             UserPrincipal.FindByIdentity(principalContext, IdentityType.SamAccountName, accountName) ??

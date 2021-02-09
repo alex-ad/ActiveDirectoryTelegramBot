@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 {
-	public class AdNotifyMessageUserModified : AdNotifyMessage
+	internal class AdNotifyMessageUserModified : AdNotifyMessage
 	{
 		private AdNotifyMessageUserModified(AdNotifyType.ChangingObjectType changingObject, AdNotifyType.ChangingOperationType changingOperation, string schemeClass, string name, string property, string value) : base(changingObject, changingOperation, schemeClass, name, property, value) { }
 

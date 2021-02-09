@@ -7,8 +7,16 @@ using AlexAd.ActiveDirectoryTelegramBot.Bot.Models;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Config
 {
-	public interface IConfig
+	internal interface IConfig
 	{
+		string ServerAddress { get; }
+		string DomainAddress { get; }
+		string UserName { get; }
+		string UserPassword { get; }
+		List<string> AllowedAdGroups { get; }
+		string TelegramBotToken { get; }
+		List<TelegramUser> TelegramUsers { get; }
+
 		void RemoveUser(TelegramUser user);
 		void SetNewUser(TelegramUser user);
 		bool TryGetParamsFromFile();

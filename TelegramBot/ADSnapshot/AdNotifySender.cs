@@ -5,27 +5,30 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Bot;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Config;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 {
-	public class AdNotifySender
+	internal class AdNotifySender
 	{
+		public delegate void BroadcastMessage(AdNotifyMessage message);
+
+		public static event BroadcastMessage OnBroadcastMessage;
+
 		private static AdNotifySender _instance;
-		private static Config.Config _config;
-		private static AdSnapshot _adSnapshot;
+		private static IConfig _config;
+		private static IAdSnapshot _adSnapshot;
 		private static AdNotifyCollection _adNotifier;
-		private static TelegramBot _bot;
 		private static bool _active;
 
 		protected AdNotifySender() { }
 
-		public static AdNotifySender Instance(AdSnapshot adSnapshot, Config.Config config, TelegramBot bot)
+		public static AdNotifySender Instance(IAdSnapshot adSnapshot, IConfig config)
 		{
 			_instance = _instance ?? new AdNotifySender();
 			_config = config;
 			_adSnapshot = adSnapshot;
 			_adNotifier = _adNotifier ?? new AdNotifyCollection();
-			_bot = bot;
 			_active = false;
 			AdSnapshot.OnAdChanged += SendNotifyFromQueue;
 
@@ -46,7 +49,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 				while ( AdNotifyCollection.Count > 0 )
 				{
 					var message = _adNotifier.Pop();
-					_bot.SendBroadCastMessage(message);
+					OnBroadcastMessage?.Invoke(message);
 				}
 
 			});

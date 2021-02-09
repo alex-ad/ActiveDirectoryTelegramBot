@@ -10,7 +10,7 @@ using AlexAd.ActiveDirectoryTelegramBot.Bot.Service;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 {
-	public class Ad : Decorator, IAdFacade
+	internal class Ad : Decorator, IAdReader
 	{
 		private static IComponent[] _decorators;
 		private static ILogger _logger;
@@ -43,7 +43,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 			Connect();
 		}
 
-		private void Config_OnConfigUpdated(Config.Config config)
+		private void Config_OnConfigUpdated(IConfig config)
 		{
 			_config = config;
 			Connect();

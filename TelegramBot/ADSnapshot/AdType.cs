@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 {
-	public static class AdType
+	internal static class AdType
 	{
 		[Flags]
 		public enum UserAccountControl

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 {
-	public interface IAdFacade
+	internal interface IAdReader
 	{
 		AdReader Request { get; }
 		void Connect();

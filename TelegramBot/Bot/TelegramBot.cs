@@ -15,14 +15,14 @@ using Telegram.Bot.Types.Enums;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 {
-	public class TelegramBot : IDisposable, IComponent
+	internal class TelegramBot : IDisposable, IComponent
 	{
 		private static TelegramBotClient _bot;
-		private static IAdFacade _ad;
+		private static IAdReader _ad;
 		private static ILogger _logger;
-		private static Config.Config _config;
+		private static IConfig _config;
 
-		public TelegramBot(ILogger logger, IAdFacade adReader, IConfig config)
+		public TelegramBot(ILogger logger, IAdReader adReader, IConfig config)
 		{
 			_ad = (Ad)adReader;
 			_logger = (Logger.Logger)logger;
@@ -40,8 +40,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 			try
 			{
 				var response = msg.DoRequest(e.Message);
-				/*if (!string.IsNullOrEmpty(response.EditedMessage))
-					await _bot.EditMessageTextAsync(e.Message.Chat.Id, e.Message.MessageId, response.EditedMessage);*/
 				await _bot.SendTextMessageAsync(e.Message.From.Id, response.Message);
 
 				if (response.UserData != null)
@@ -106,7 +104,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 			return msg.ToString();
 		}
 
-		public async void SendBroadCastMessage(AdNotifyMessage message)
+		private async void SendBroadCastMessage(AdNotifyMessage message)
 		{
 			await Task.Run(() =>
 			{
@@ -128,9 +126,15 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 		public void Init(params IComponent[] decorators)
 		{
 			Config.Config.OnConfigUpdated += Config_OnConfigUpdated;
+			AdNotifySender.OnBroadcastMessage += AdNotifySender_OnBroadcastMessage;
 		}
 
-		private void Config_OnConfigUpdated(Config.Config config)
+		private void AdNotifySender_OnBroadcastMessage(AdNotifyMessage message)
+		{
+			SendBroadCastMessage(message);
+		}
+
+		private void Config_OnConfigUpdated(IConfig config)
 		{
 			_config = config;
 			if (string.IsNullOrEmpty(_config.TelegramBotToken)) return;

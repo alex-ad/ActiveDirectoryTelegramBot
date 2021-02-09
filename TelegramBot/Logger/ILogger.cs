@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Logger
 {
-	public interface ILogger
+	internal interface ILogger
 	{
 		void Log(string message, OutputTarget outputTarget);
 	}

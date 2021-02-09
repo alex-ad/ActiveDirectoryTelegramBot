@@ -9,7 +9,7 @@ using System.Xml;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 {
-	public class AdNotifyCollection
+	internal class AdNotifyCollection
 	{
 		//private static Queue<AdNotifyMessage> NotifyMessages { get; }
 		private static ConcurrentDictionary<string, AdNotifyMessage> NotifyMessages { get; }

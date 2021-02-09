@@ -5,7 +5,7 @@ using AlexAd.ActiveDirectoryTelegramBot.Bot.Logger;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 {
-    public class AdConnection
+	internal class AdConnection
     {
         private static AdConnection _instance;
         private static Logger.Logger _logger;
