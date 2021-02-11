@@ -9,5 +9,6 @@
         public static string[] ComputerInfo = {"/Computer", "/c"};
         public static string[] SignIn = {"/SignIn", "/si"};
         public static string[] SignOut = {"/SignOut", "/so"};
+        public static string[] Reload = {"/Reload"};
     }
 }

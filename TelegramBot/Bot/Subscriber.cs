@@ -23,7 +23,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 			_ad = ad;
 		}
 
-		public string SignIn(string userName)
+		/*public string SignIn(string userName)
 		{
 			if ( IsIdentifiedUser())
 			{
@@ -53,7 +53,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 			}
 
 			return "Congratulations. You was successfully SignedIn.";
-		}
+		}*/
 
 		public string SignIn(string userName, string userPassword)
 		{

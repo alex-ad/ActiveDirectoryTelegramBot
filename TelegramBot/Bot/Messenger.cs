@@ -45,6 +45,8 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 				ResponseSignIn(_msgParts);
 			else if (_msgParts[0].EqualsOneOfTheValues(Commands.SignOut))
 				ResponseSignOut();
+			else if ( _msgParts[0].EqualsOneOfTheValues(Commands.Reload) )
+				ResponseSignOut();
 
 			return _response;
 		}
@@ -149,6 +151,11 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 		{
 			var user = new Subscriber(_telegramUser.Id, _config, _ad);
 			_response.Message = user.SignOut();
+		}
+
+		private void ResponseReload()
+		{
+
 		}
 	}
 }
