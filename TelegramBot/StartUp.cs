@@ -26,7 +26,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot
 	// TODO Горячая (через команду) перезагрузка конфига
 	// TODO Добавить админа (умеет блочить юзеров, перезагружать конфиг, менять конфиг)
 	// TODO Бот должен запускаться даже при пустом конфиге (в т.ч. при сбоях в цепочке Init), чтоб админ мог настроить командами, но оставить Завершение , если нет сети
-	// TODO Оповещения АД
 	// TODO Удаление строки с паролем после авторизации
 	// TODO Кнопки подписки, но только если получатся уведомления
 	// TODO Подписка на самого бота только по ссылке
@@ -39,7 +38,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot
 		private static App _services;
 		private static Logger.Logger _logger;
 
-		// TODO Сделать гибкую инициалтзацию сервисов (Декоратор?)
 		public static void Initialize()
 		{
 			_services = App.Instance();
