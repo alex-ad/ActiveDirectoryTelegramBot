@@ -13,42 +13,40 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 	/// </summary>
 	class Messenger
 	{
-		private List<string> _msgParts;
-		private readonly Response _response;
-		private readonly AdReader _ad;
+		//private List<string> _msgParts;
+		//private readonly Response _response;
+		private readonly IAdReader _ad;
 		private readonly User _telegramUser;
 		private readonly IConfig _config;
 
-		public Messenger(AdReader ad, User telegramUser, IConfig config)
+		public Messenger(IAdReader ad, User telegramUser, IConfig config)
 		{
-			_response = new Response();
+			//_response = new Response();
 			_ad = ad;
 			_telegramUser = telegramUser;
 			_config = config;
 		}
 
-		public Response DoRequest(Message msg)
+		public ResponseBase DoRequest(Message msg)
 		{
 			if ( string.IsNullOrEmpty(msg.Text) )
-				return _response;
-			_msgParts = MsgParse(msg.Text);
-			if ( _msgParts.Count < 1 )
-				return _response;
+				return new ResponseHelp();
+			var msgParts = MsgParse(msg.Text);
+			if ( msgParts?.Count() < 1 )
+				return new ResponseHelp();
 
-			if ( _msgParts[0].EqualsOneOfTheValues(Commands.Help) )
-				ResponseHelp();
-			else if ( _msgParts[0].EqualsOneOfTheValues(Commands.UserInfoByLogin) )
-				ResponseUserInfoByLogin(_msgParts);
-			else if ( _msgParts[0].EqualsOneOfTheValues(Commands.UserInfoByName) )
-				ResponseUserInfoByName(_msgParts);
-			else if ( _msgParts[0].EqualsOneOfTheValues(Commands.SignIn) )
-				ResponseSignIn(_msgParts);
-			else if (_msgParts[0].EqualsOneOfTheValues(Commands.SignOut))
-				ResponseSignOut();
-			else if ( _msgParts[0].EqualsOneOfTheValues(Commands.Reload) )
-				ResponseSignOut();
+			if ( msgParts[0].EqualsOneOfTheValues(Commands.Help))
+				return new ResponseHelp();
+			if ( msgParts[0].EqualsOneOfTheValues(Commands.UserInfoByLogin) )
+				return new ResponseUserByLogin(msgParts, _ad);
+			if ( msgParts[0].EqualsOneOfTheValues(Commands.UserInfoByName) )
+				return new ResponseUserByName(msgParts, _ad);
+			if ( msgParts[0].EqualsOneOfTheValues(Commands.SignIn) )
+				return new ResponseSignIn(msgParts, _ad, _config, _telegramUser.Id);
+			if (msgParts[0].EqualsOneOfTheValues(Commands.SignOut))
+				return new ResponseSignOut(_ad, _config, _telegramUser.Id);
 
-			return _response;
+			return new ResponseHelp();
 		}
 
 		private List<string> MsgParse(string message)
@@ -56,12 +54,12 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 			return message.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToList();
 		}
 
-		private void ResponseHelp()
+		/*private void ResponseHelp()
 		{
 			_response.Message = "Commands list:\r\n/help [/h] - Help\r\n/connect [/c] - connect\r\n/userbylogin [/ul][/u] - Get user data by AccountName\r\n/userbyname [/un] - Get user data by FullName (DisplayName)\r\n/group [/g] - Get group data by GroupName\r\n/computer [/c] - Get computer data by ComputerName";
-		}
+		}*/
 
-		private void ResponseUserInfoByLogin(List<string> message)
+		/*private void ResponseUserInfoByLogin(List<string> message)
 		{
 			if ( message.Count() < 2 || string.IsNullOrEmpty(message[1]) )
 				return;
@@ -88,9 +86,9 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 			};
 
 			_response.GroupData = new List<string>(_ad.GetGroupsByUser(userPrincipal)).OrderBy(x => x);
-		}
+		}*/
 
-		private void ResponseUserInfoByName(List<string> message)
+		/*private void ResponseUserInfoByName(List<string> message)
 		{
 			if ( message.Count() < 4 || string.IsNullOrEmpty(message[1]) )
 				return;
@@ -117,9 +115,9 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 			};
 
 			_response.GroupData = new List<string>(_ad.GetGroupsByUser(userPrincipal)).OrderBy(x => x);
-		}
+		}*/
 
-		private void ResponseSignIn(List<string> message)
+		/*private void ResponseSignIn(List<string> message)
 		{
 			if ( message.Count() < 3 || string.IsNullOrEmpty(message[1]) || string.IsNullOrEmpty(message[2]) )
 				return;
@@ -145,17 +143,12 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 			var user = new Subscriber(_telegramUser.Id, _config, _ad);
 			_response.Message = user.SignIn(userName, userPassword);
 			_response.EditedMessage = $"{message[1]} -u{userName} -p***";
-		}
+		}*/
 
-		private void ResponseSignOut()
+		/*private void ResponseSignOut()
 		{
 			var user = new Subscriber(_telegramUser.Id, _config, _ad);
 			_response.Message = user.SignOut();
-		}
-
-		private void ResponseReload()
-		{
-
-		}
+		}*/
 	}
 }

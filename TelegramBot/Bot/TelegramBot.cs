@@ -43,7 +43,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 				await _bot.SendTextMessageAsync(e.Message.From.Id, response.Message);
 
 				if (!string.IsNullOrEmpty(response.EditedMessage))
-					//await _bot.EditMessageTextAsync(e.Message.Chat.Id, e.Message.MessageId, response.EditedMessage);
 					await _bot.DeleteMessageAsync(e.Message.Chat.Id, e.Message.MessageId);
 
 				if (response.UserData != null)

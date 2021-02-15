@@ -13,47 +13,15 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 	class Subscriber
 	{
 		private readonly int _telegramUserId;
-		private readonly Config.Config _config;
-		private readonly AdReader _ad;
+		private readonly IConfig _config;
+		private readonly IAdReader _ad;
 
-		public Subscriber(int userId, IConfig config, AdReader ad)
+		public Subscriber(int userId, IConfig config, IAdReader ad)
 		{
 			_telegramUserId = userId;
 			_config = (Config.Config)config;
 			_ad = ad;
 		}
-
-		/*public string SignIn(string userName)
-		{
-			if ( IsIdentifiedUser())
-			{
-				if ( !IsAllowedUser() )
-					return "Sorry, You are not allowed to get access this service because of the Bot Config. Contact your system administrator for help.";
-				return "You are already SignedIn.";
-			}
-			if (!_ad.IsIdentifiedUser(userName, _config.AllowedAdGroups)) return "Sorry, You are not allowed to get access this service because of you Active Directory Account permissions. Contact your system administrator for help.";
-
-			var user = new TelegramUser
-			{
-				ADUserName = userName,
-				Allowed = true,
-				TelegramId = _telegramUserId,
-				Notifications = AdNotifications.None
-			};
-
-			try
-			{
-				_config.TelegramUsers.Add(user);
-				_config.SetNewUser(user);
-			}
-			catch (Exception ex)
-			{
-				if (IsIdentifiedUser()) _config.TelegramUsers.Remove(user);
-				return $"Some error occured on creating new user: {ex.Message}";
-			}
-
-			return "Congratulations. You was successfully SignedIn.";
-		}*/
 
 		public string SignIn(string userName, string userPassword)
 		{

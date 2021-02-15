@@ -56,5 +56,16 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 				if ( _adConnection.TryConnect(out _adContext) )
 					_ad = new AdReader(_adContext);
 		}
+
+		public UserPrincipal GetUserObjectByLogin(string accountName) => _ad.GetUserObjectByLogin(accountName);
+
+		public string GetUserProperty(UserPrincipal userPrincipal, string propertyName) =>
+			_ad.GetUserProperty(userPrincipal, propertyName);
+
+		public IEnumerable<string> GetGroupsByUser(UserPrincipal userPrincipal) => _ad.GetGroupsByUser(userPrincipal);
+
+		public UserPrincipal GetUserObjectByName(string fullName) => _ad.GetUserObjectByName(fullName);
+
+		public bool IsIdentifiedUser(string userName, string userPassword, List<string> groups) => _ad.IsIdentifiedUser(userName, userPassword, groups);
 	}
 }

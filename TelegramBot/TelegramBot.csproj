@@ -88,6 +88,12 @@
     <Compile Include="Bot\Extensions.cs" />
     <Compile Include="Bot\Messenger.cs" />
     <Compile Include="Bot\Response.cs" />
+    <Compile Include="Bot\ResponseBase.cs" />
+    <Compile Include="Bot\ResponseHelp.cs" />
+    <Compile Include="Bot\ResponseSignIn.cs" />
+    <Compile Include="Bot\ResponseSignOut.cs" />
+    <Compile Include="Bot\ResponseUserByLogin.cs" />
+    <Compile Include="Bot\ResponseUserByName.cs" />
     <Compile Include="Bot\Subscriber.cs" />
     <Compile Include="Bot\TelegramBot.cs" />
     <Compile Include="Config\Config.cs" />
