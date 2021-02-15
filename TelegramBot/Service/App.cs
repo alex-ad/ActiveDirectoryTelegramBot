@@ -23,10 +23,12 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Service
 		{
 			_instance = _instance ?? new App();
 			_services = new List<Decorator>();
+			_config.msgHelpList.Add("Commands list:");
+			_config.msgHelpList.Add("/help [/h] - Help");
 			return _instance;
 		}
 
-		protected App() { }
+		private App() { }
 
 		public void Add<T>(T service) where T : Decorator
 		{
@@ -37,6 +39,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Service
 					_services.Remove(srv);
 			}
 
+			_config.msgHelpList.Add(service.MsgHelp);
 			service.Component = _services.LastOrDefault();
 			_services.Add(service);
 		}

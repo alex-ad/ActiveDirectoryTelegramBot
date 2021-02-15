@@ -22,18 +22,21 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Config
 		public List<string> AllowedAdGroups { get; private set; }
 		public string TelegramBotToken { get; private set; }
 		public List<TelegramUser> TelegramUsers { get; private set; }
+		public override string MsgHelp { get; protected set; }
+		public List<string> msgHelpList { get; set; }
 
 		private static Config _instance;
 		private static ILogger _logger;
 		private static IComponent[] _decorators;
 
-		protected Config() { }
+		private Config()
+		{
+			msgHelpList = new List<string>();
+		}
 
 		public static Config Instance()
 		{
 			_instance = _instance ?? new Config();
-			
-
 			return _instance;
 		}
 
@@ -41,6 +44,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Config
 		{
 			base.Init(decorators);
 
+			MsgHelp = string.Empty;
 			_decorators = decorators;
 			_logger = _decorators?.OfType<ILogger>().FirstOrDefault();
 			_logger?.Log("Initializing Service: Config...", OutputTarget.Console);
@@ -211,11 +215,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Config
 				(bool.TryParse(node.SelectSingleNode("//Notifications/ComputerBlockedUnblocked")?.InnerText.Trim(), out bool cnu) ? cnu ? AdNotifications.ComputerBlockedUnblocked : 0 : 0) &
 				(bool.TryParse(node.SelectSingleNode("//Notifications/ComputerDeleted")?.InnerText.Trim(), out bool cd) ? cd ? AdNotifications.ComputerDeleted : 0 : 0) &
 				(bool.TryParse(node.SelectSingleNode("//Notifications/ComputerMoved")?.InnerText.Trim(), out bool cm) ? cm ? AdNotifications.ComputerMoved : 0 : 0);
-		}
-
-		public void Reload()
-		{
-			throw new NotImplementedException();
 		}
 	}
 }

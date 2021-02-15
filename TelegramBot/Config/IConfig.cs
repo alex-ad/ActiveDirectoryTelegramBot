@@ -10,16 +10,15 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Config
 	internal interface IConfig
 	{
 		string ServerAddress { get; }
-		string DomainAddress { get; }
 		string UserName { get; }
 		string UserPassword { get; }
 		List<string> AllowedAdGroups { get; }
 		string TelegramBotToken { get; }
 		List<TelegramUser> TelegramUsers { get; }
+		List<string> msgHelpList { get; }
 
 		void RemoveUser(TelegramUser user);
 		void SetNewUser(TelegramUser user);
 		bool TryGetParamsFromFile();
-		void Reload();
 	}
 }

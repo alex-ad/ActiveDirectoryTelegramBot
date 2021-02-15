@@ -24,9 +24,9 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 
 		public TelegramBot(ILogger logger, IAdReader adReader, IConfig config)
 		{
-			_ad = (Ad)adReader;
-			_logger = (Logger.Logger)logger;
-			_config = (Config.Config)config;
+			_ad = adReader;
+			_logger = logger;
+			_config = config;
 
 			_logger.Log("Starting Bot", OutputTarget.Console | OutputTarget.File);
 		}
@@ -35,55 +35,20 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 		{
 			if (e.Message?.Type != MessageType.Text)
 				return;
-			var msg = new Messenger(_ad.Request, e.Message.From, _config);
+			var msg = new Messenger(_ad, e.Message.From, _config);
 
 			try
 			{
 				var response = msg.DoRequest(e.Message);
+				await response.Init();
+
 				await _bot.SendTextMessageAsync(e.Message.From.Id, response.Message);
-
-				if (!string.IsNullOrEmpty(response.EditedMessage))
+				if ( response.NeedToClean )
 					await _bot.DeleteMessageAsync(e.Message.Chat.Id, e.Message.MessageId);
-
-				if (response.UserData != null)
-					await _bot.SendTextMessageAsync(e.Message.From.Id, ParseResponseObject(response.UserData));
-				if (response.GroupData?.Count() > 1)
-				{
-					var groups = ParseResponseList(response.GroupData);
-					await _bot.SendTextMessageAsync(e.Message.From.Id, groups);
-				}
-			}
-			catch (Exception ex)
+			} catch ( Exception ex )
 			{
 				await _bot.SendTextMessageAsync(e.Message.From.Id, ex.Message);
 			}
-		}
-
-		private static string ParseResponseObject(object responseObj)
-		{
-			var t = responseObj.GetType();
-			var props = t.GetProperties();
-			var sb = new StringBuilder();
-
-			foreach (var prop in props)
-			{
-				if (prop.GetIndexParameters().Length == 0)
-					sb.AppendLine($"{prop.Name}: {prop.GetValue(responseObj)}");
-				else
-					sb.AppendLine($"{prop.Name}: <Indexed>");
-			}
-
-			return sb.ToString();
-		}
-
-		private static string ParseResponseList(IEnumerable<string> responseObj)
-		{
-			var sb = new StringBuilder();
-
-			foreach (var s in responseObj)
-				sb.AppendLine(s);
-
-			return sb.ToString();
 		}
 
 		private string FormatMessage(AdNotifyMessage message)

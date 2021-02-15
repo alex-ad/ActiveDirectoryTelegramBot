@@ -21,8 +21,9 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 		private static IConfig _config;
 
 		public AdReader Request => _ad;
+		public override string MsgHelp { get; protected set; }
 
-		protected Ad() { }
+		private Ad() { }
 
 		public static Ad Instance()
 		{
@@ -34,6 +35,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 		{
 			base.Init(decorators);
 
+			MsgHelp = "/userbylogin [/ul][/u] - Get user data by AccountName\r\n/userbyname [/un] - Get user data by FullName (DisplayName)\r\n/group [/g] - Get group data by GroupName\r\n/computer [/c] - Get computer data by ComputerName";
 			_decorators = decorators;
 			_logger = _decorators?.OfType<ILogger>().FirstOrDefault();
 			_config = _decorators?.OfType<IConfig>().FirstOrDefault();

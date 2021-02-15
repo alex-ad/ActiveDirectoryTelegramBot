@@ -8,9 +8,9 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 {
 	abstract class ResponseBase
 	{
-		protected bool NeedToClean;
 		protected List<string> MessagesIn;
-		protected virtual string Message { get; set; }
+		public bool NeedToClean { get; protected set; }
+		public string Message { get; protected set; }
 
 		protected ResponseBase()
 		{
