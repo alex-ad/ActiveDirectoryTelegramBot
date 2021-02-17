@@ -19,8 +19,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Logger
 		private static string _fileName = "log.txt";
 		private static DateTime _time;
 
-		public override string MsgHelp { get; protected set; }
-
 		private Logger() { }
 
 		public static Logger Instance()
@@ -32,7 +30,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Logger
 		public override void Init(params IComponent[] decorators)
 		{
 			base.Init(decorators);
-			MsgHelp = string.Empty;
 			Log("Initializing Service: Logger...", OutputTarget.Console);
 		}
 

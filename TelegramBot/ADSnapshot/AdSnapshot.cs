@@ -197,6 +197,9 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 		{
 			base.Init(decorators);
 
+			HelpMsg.HelpMsg.MsgList.Add("/NotificationsOn [/non] - Subscribe to notifications on AD changes");
+			HelpMsg.HelpMsg.MsgList.Add("/NotificationsOff [/noff] - Unsubscribe to notifications on AD changes");
+
 			_decorators = decorators;
 			_logger = _decorators?.OfType<ILogger>().FirstOrDefault();
 			_config = (Config.Config)_decorators?.OfType<IConfig>().FirstOrDefault();

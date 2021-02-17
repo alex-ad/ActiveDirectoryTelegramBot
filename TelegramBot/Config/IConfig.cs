@@ -15,7 +15,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Config
 		List<string> AllowedAdGroups { get; }
 		string TelegramBotToken { get; }
 		List<TelegramUser> TelegramUsers { get; }
-		List<string> msgHelpList { get; }
 
 		void RemoveUser(TelegramUser user);
 		void SetNewUser(TelegramUser user);

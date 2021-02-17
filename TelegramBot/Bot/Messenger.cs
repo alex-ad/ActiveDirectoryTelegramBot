@@ -27,23 +27,23 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 		public ResponseBase DoRequest(Message msg)
 		{
 			if ( string.IsNullOrEmpty(msg.Text) )
-				return new ResponseHelp(_config);
+				return new ResponseHelp();
 			var msgParts = MsgParse(msg.Text);
 			if ( msgParts?.Count() < 1 )
-				return new ResponseHelp(_config);
+				return new ResponseHelp();
 
 			if ( msgParts[0].EqualsOneOfTheValues(Commands.Help))
-				return new ResponseHelp(_config);
+				return new ResponseHelp();
 			if ( msgParts[0].EqualsOneOfTheValues(Commands.UserInfoByLogin) )
 				return new ResponseUserByLogin(msgParts, _ad);
 			if ( msgParts[0].EqualsOneOfTheValues(Commands.UserInfoByName) )
 				return new ResponseUserByName(msgParts, _ad);
-			if ( msgParts[0].EqualsOneOfTheValues(Commands.SignIn) )
+			if ( msgParts[0].EqualsOneOfTheValues(Commands.NotificationsOn) )
 				return new ResponseSignIn(msgParts, _ad, _config, _telegramUser.Id);
-			if (msgParts[0].EqualsOneOfTheValues(Commands.SignOut))
+			if (msgParts[0].EqualsOneOfTheValues(Commands.NotificationsOff))
 				return new ResponseSignOut(_ad, _config, _telegramUser.Id);
 
-			return new ResponseHelp(_config);
+			return new ResponseHelp();
 		}
 
 		private List<string> MsgParse(string message)

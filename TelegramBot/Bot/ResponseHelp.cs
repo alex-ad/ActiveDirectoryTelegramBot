@@ -4,23 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Config;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Service;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 {
-	// TODO Разнести строки помощи по своим сервисам
 	class ResponseHelp : ResponseBase
 	{
-		private readonly IConfig _config;
-
-		public ResponseHelp(IConfig config) : base()
-		{
-			_config = config;
-		}
+		public ResponseHelp() : base() { }
 
 		public override async Task Init()
 		{
-			Message = "Commands list:\r\n/help [/h] - Help";
-			_config.msgHelpList.ForEach(x => Message += x);
+			Message = string.Empty;
+			if (HelpMsg.HelpMsg.MsgList?.Count < 1) return;
+			HelpMsg.HelpMsg.MsgList.ForEach(x => Message += x + Environment.NewLine);
 		}
 	}
 }

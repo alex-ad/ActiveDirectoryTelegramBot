@@ -97,6 +97,7 @@
     <Compile Include="Bot\TelegramBot.cs" />
     <Compile Include="Config\Config.cs" />
     <Compile Include="Config\IConfig.cs" />
+    <Compile Include="HelpMsg\HelpMsg.cs" />
     <Compile Include="Logger\ILogger.cs" />
     <Compile Include="Logger\Logger.cs" />
     <Compile Include="Models\GroupInfo.cs" />
