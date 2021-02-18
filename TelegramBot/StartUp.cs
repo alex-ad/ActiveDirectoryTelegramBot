@@ -31,6 +31,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot
 	// TODO Инфа о группах
 	// TODO Инфа о компах
 	// TODO Убрать лишнюю прослойку из AD-ADTree-ADReader ???
+	// TODO Когда ответ слишком большой, нужно нарезать по частям (какой лимит в боте?)
 
 	static class StartUp
 	{

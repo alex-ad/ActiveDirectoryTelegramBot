@@ -69,11 +69,16 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 
 		public IEnumerable<string> GetGroupsByUser(UserPrincipal userPrincipal) => _ad.GetGroupsByUser(userPrincipal);
 
+		public IEnumerable<string> GetUserNamesByGroupObject(GroupPrincipal groupPrincipal) =>
+			_ad.GetUserNamesByGroupObject(groupPrincipal);
+
 		public UserPrincipal GetUserObjectByName(string fullName) => _ad.GetUserObjectByName(fullName);
 
 		public bool IsIdentifiedUser(string userName, string userPassword, List<string> groups) => _ad.IsIdentifiedUser(userName, userPassword, groups);
 
 		public ComputerPrincipal GetComputerObjectByName(string computerName) =>
 			_ad.GetComputerObjectByName(computerName);
+
+		public GroupPrincipal GetGroupObjectByName(string groupName) => _ad.GetGroupObjectByName(groupName);
 	}
 }

@@ -2,5 +2,6 @@
 {
     public class GroupInfo : ObjectInfo
     {
+	    public string Description { get; set; }
     }
 }

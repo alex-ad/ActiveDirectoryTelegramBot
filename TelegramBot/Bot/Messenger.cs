@@ -42,6 +42,10 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 				return new ResponseSignIn(msgParts, _ad, _config, _telegramUser.Id);
 			if (msgParts[0].EqualsOneOfTheValues(Commands.NotificationsOff))
 				return new ResponseSignOut(_ad, _config, _telegramUser.Id);
+			if ( msgParts[0].EqualsOneOfTheValues(Commands.ComputerInfo) )
+				return new ResponseComputerByName(msgParts, _ad);
+			if ( msgParts[0].EqualsOneOfTheValues(Commands.GroupInfo) )
+				return new ResponseGroupByName(msgParts, _ad);
 
 			return new ResponseHelp();
 		}

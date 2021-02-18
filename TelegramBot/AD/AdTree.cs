@@ -59,7 +59,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 
 			foreach (var g in groupsList )
 			{
-				using ( var groupPrincipal = principalContext.GetGroupObjectByGroupName(g.Trim()) )
+				using ( var groupPrincipal = principalContext.GetGroupObjectByName(g.Trim()) )
 				{
 					if ( userPrincipal != null && groupPrincipal != null )
 					{
@@ -74,7 +74,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 			return result;
 		}
 
-        public static bool IsIdentifiedUser(this PrincipalContext principalContext, string userName, List<string> groups)
+        /*public static bool IsIdentifiedUser(this PrincipalContext principalContext, string userName, List<string> groups)
 		{
 			var user = UserPrincipal.FindByIdentity(principalContext, IdentityType.SamAccountName, userName);
 			if (user == null) return false;
@@ -82,7 +82,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 			if (user.IsAccountLockedOut()) return false;
 
 			return IsUserMultiGroupMember(principalContext, user, groups);
-		}
+		}*/
 
         public static bool IsIdentifiedUser(this PrincipalContext principalContext, string userName, string userPassword, List<string> groups)
         {
@@ -110,7 +110,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
             }
         }*/
 
-		public static IEnumerable<UserInfo> GetUserObjectsByGroupName(this PrincipalContext principalContext, string groupName)
+		/*public static IEnumerable<UserInfo> GetUserObjectsByGroupName(this PrincipalContext principalContext, string groupName)
         {
 			var gp = principalContext.GetGroupObjectByGroupName(groupName);
             if (gp == null) yield break;
@@ -123,11 +123,10 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
                 {
                     Name = user.DisplayName,
                     SamAccountName = user.SamAccountName,
-                    Sid = user.Sid.ToString(),
                     Enabled = user.Enabled ?? false
                 };
             }
-        }
+        }*/
 
 		public static string GetUserProperty(this PrincipalContext principalContext, UserPrincipal userPrincipal, string propertyName)
 		{
@@ -139,19 +138,26 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 
 		public static IEnumerable<string> GetGroupNamesByUserObject(this PrincipalContext principalContext,
             UserPrincipal userPrincipal) => userPrincipal.GetGroups(principalContext).Select(x => x.Name);
-        
-        public static GroupPrincipal GetGroupObjectByGroupName(this PrincipalContext principalContext, string groupName) =>
-            GroupPrincipal.FindByIdentity(principalContext, groupName);
 
-        public static PrincipalSearchResult<Principal> GetUserObjectsCollection(this PrincipalContext principalContext) =>
+		public static IEnumerable<string> GetUserNamesByGroupObject(this PrincipalContext principalContext,
+			GroupPrincipal groupPrincipal) => groupPrincipal.GetMembers(true).Select(x => x.Name);
+        
+        /*public static GroupPrincipal GetGroupObjectByGroupName(this PrincipalContext principalContext, string groupName) =>
+            GroupPrincipal.FindByIdentity(principalContext, groupName);*/
+
+        /*public static PrincipalSearchResult<Principal> GetUserObjectsCollection(this PrincipalContext principalContext) =>
             new PrincipalSearcher(new UserPrincipal(principalContext)).FindAll();
 
         public static PrincipalSearchResult<Principal> GetGroupObjectsCollection(this PrincipalContext principalContext) =>
-            new PrincipalSearcher(new GroupPrincipal(principalContext)).FindAll();
+            new PrincipalSearcher(new GroupPrincipal(principalContext)).FindAll();*/
 
         public static ComputerPrincipal GetComputerObjectByName(this PrincipalContext principalContext,
 	        string computerName) =>
 	        ComputerPrincipal.FindByIdentity(principalContext, IdentityType.Name, computerName) ??
 	        throw new NoMatchingPrincipalException("Sorry, no such computer account found for the domain");
+
+        public static GroupPrincipal GetGroupObjectByName(this PrincipalContext principalContext, string groupName) =>
+	        GroupPrincipal.FindByIdentity(principalContext, IdentityType.Name, groupName) ??
+	        throw new NoMatchingPrincipalException("Sorry, no such group name found for the domain");
     }
 }

@@ -15,13 +15,18 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 		public string GetUserProperty(UserPrincipal userPrincipal, string propertyName) =>
 			_adContext.GetUserProperty(userPrincipal, propertyName);
 
+		// зачем 1...
 		IEnumerable<string> GetGroupsByUserObject(UserPrincipal userPrincipal) =>
 			_adContext.GetGroupNamesByUserObject(userPrincipal);
+
+		public IEnumerable<string> GetUserNamesByGroupObject(GroupPrincipal groupPrincipal) =>
+			_adContext.GetUserNamesByGroupObject(groupPrincipal);
 
 		public UserPrincipal GetUserObjectByLogin(string accountName) => _adContext.GetUserObjectByLogin(accountName);
 		
 		public UserPrincipal GetUserObjectByName(string fullName) => _adContext.GetUserObjectByName(fullName);
 
+		// ... и 2, сделать все одним методом
 		public IEnumerable<string> GetGroupsByUser(UserPrincipal userPrincipal) => GetGroupsByUserObject(userPrincipal);
 
 		//public bool IsIdentifiedUser(string userName, List<string> groups) => _adContext.IsIdentifiedUser(userName, groups);
@@ -30,5 +35,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 
 		public ComputerPrincipal GetComputerObjectByName(string computerName) =>
 			_adContext.GetComputerObjectByName(computerName);
+
+		public GroupPrincipal GetGroupObjectByName(string groupName) => _adContext.GetGroupObjectByName(groupName);
 	}
 }

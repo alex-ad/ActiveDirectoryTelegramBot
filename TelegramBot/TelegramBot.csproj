@@ -89,6 +89,7 @@
     <Compile Include="Bot\Messenger.cs" />
     <Compile Include="Bot\ResponseBase.cs" />
     <Compile Include="Bot\ResponseComputerByName.cs" />
+    <Compile Include="Bot\ResponseGroupByName.cs" />
     <Compile Include="Bot\ResponseHelp.cs" />
     <Compile Include="Bot\ResponseSignIn.cs" />
     <Compile Include="Bot\ResponseSignOut.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="HelpMsg\HelpMsg.cs" />
     <Compile Include="Logger\ILogger.cs" />
     <Compile Include="Logger\Logger.cs" />
+    <Compile Include="Models\ComputerInfo.cs" />
     <Compile Include="Models\GroupInfo.cs" />
     <Compile Include="Models\GroupUsersInfo.cs" />
     <Compile Include="Models\ObjectInfo.cs" />

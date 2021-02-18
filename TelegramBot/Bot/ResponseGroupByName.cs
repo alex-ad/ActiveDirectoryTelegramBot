@@ -8,11 +8,11 @@ using AlexAd.ActiveDirectoryTelegramBot.Bot.Models;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 {
-	class ResponseComputerByName : ResponseBase
+	class ResponseGroupByName : ResponseBase
 	{
 		private readonly IAdReader _ad;
 
-		public ResponseComputerByName(List<string> message, IAdReader ad) : base()
+		public ResponseGroupByName(List<string> message, IAdReader ad) : base()
 		{
 			MessagesIn = message;
 			_ad = ad;
@@ -27,21 +27,22 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 
 			await Task.Run(() =>
 			{
-				var computerPrincipal = _ad.GetComputerObjectByName(MessagesIn[1]);
-				if ( computerPrincipal == null )
+				var groupPrincipal = _ad.GetGroupObjectByName(MessagesIn[1]);
+				if ( groupPrincipal == null )
 					return;
 
 				var sb = new StringBuilder($"<<< Data for {MessagesIn[1]} >>>" + Environment.NewLine);
 
-				var compData = new ComputerInfo
+				var userData = new GroupInfo
 				{
-					Enabled = computerPrincipal.Enabled.Value,
-					Name = computerPrincipal.DistinguishedName,
-					Description = computerPrincipal.Description,
-					LastLogon = computerPrincipal.LastLogon ?? DateTime.MinValue
+					Name = groupPrincipal.DistinguishedName,
+					Description = groupPrincipal.Description
 				};
 
-				sb.AppendLine(ParseResponseObject(compData));
+				var groupData = new List<string>(_ad.GetUserNamesByGroupObject(groupPrincipal)).OrderBy(x => x);
+
+				sb.AppendLine(ParseResponseObject(userData)).AppendLine(ParseResponseList(groupData));
+
 				Message = sb.ToString();
 			});
 		}

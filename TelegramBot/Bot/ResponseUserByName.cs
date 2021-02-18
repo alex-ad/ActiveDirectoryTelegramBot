@@ -31,7 +31,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 				if ( userPrincipal == null )
 					return;
 
-				var sb = new StringBuilder($"<<< Data for {MessagesIn[1]} {MessagesIn[2]} {MessagesIn[3]} >>>");
+				var sb = new StringBuilder($"<<< Data for {MessagesIn[1]} {MessagesIn[2]} {MessagesIn[3]} >>>" + Environment.NewLine);
 
 				var userData = new UserInfoExt
 				{
@@ -43,7 +43,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 					Company = _ad.GetUserProperty(userPrincipal, "Company"),
 					Department = _ad.GetUserProperty(userPrincipal, "Department"),
 					SamAccountName = userPrincipal.SamAccountName,
-					Sid = userPrincipal.Sid.ToString(),
 					Title = _ad.GetUserProperty(userPrincipal, "Title"),
 					Description = userPrincipal.Description
 				};
