@@ -88,6 +88,7 @@
     <Compile Include="Bot\Extensions.cs" />
     <Compile Include="Bot\Messenger.cs" />
     <Compile Include="Bot\ResponseBase.cs" />
+    <Compile Include="Bot\ResponseComputerByName.cs" />
     <Compile Include="Bot\ResponseHelp.cs" />
     <Compile Include="Bot\ResponseSignIn.cs" />
     <Compile Include="Bot\ResponseSignOut.cs" />

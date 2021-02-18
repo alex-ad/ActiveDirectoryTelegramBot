@@ -72,5 +72,8 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 		public UserPrincipal GetUserObjectByName(string fullName) => _ad.GetUserObjectByName(fullName);
 
 		public bool IsIdentifiedUser(string userName, string userPassword, List<string> groups) => _ad.IsIdentifiedUser(userName, userPassword, groups);
+
+		public ComputerPrincipal GetComputerObjectByName(string computerName) =>
+			_ad.GetComputerObjectByName(computerName);
 	}
 }

@@ -15,6 +15,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 		string GetUserProperty(UserPrincipal userPrincipal, string propertyName);
 		IEnumerable<string> GetGroupsByUser(UserPrincipal userPrincipal);
 		UserPrincipal GetUserObjectByName(string fullName);
+		ComputerPrincipal GetComputerObjectByName(string computerName);
 		bool IsIdentifiedUser(string userName, string userPassword, List<string> groups);
 	}
 }

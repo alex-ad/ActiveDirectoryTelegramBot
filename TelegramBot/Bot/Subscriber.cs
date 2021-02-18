@@ -67,8 +67,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 
 			try
 			{
-				// TODO Config должен сам добавлять/удалять и модель, и запись в файл
-				_config.TelegramUsers.Remove(user);
 				_config.RemoveUser(user);
 			} catch ( Exception ex )
 			{
@@ -83,10 +81,5 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 		public bool IsIdentifiedUser() => _config.TelegramUsers.Exists(x => x.TelegramId == _telegramUserId);
 
 		public bool IsAllowedUser() => _config.TelegramUsers.Exists(x => x.TelegramId == _telegramUserId && x.Allowed);
-
-		public void SubscribeOnNotifications()
-		{
-
-		}
 	}
 }

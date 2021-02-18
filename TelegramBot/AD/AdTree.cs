@@ -11,11 +11,11 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
     {
         public static UserPrincipal GetUserObjectByLogin(this PrincipalContext principalContext, string accountName) =>
             UserPrincipal.FindByIdentity(principalContext, IdentityType.SamAccountName, accountName) ??
-            throw new NoMatchingPrincipalException($"Sorry, no such user account found for the domain");
+            throw new NoMatchingPrincipalException("Sorry, no such user account found for the domain");
 
 		public static UserPrincipal GetUserObjectByName(this PrincipalContext principalContext, string fullName) =>
 			UserPrincipal.FindByIdentity(principalContext, IdentityType.Name, fullName) ??
-			throw new NoMatchingPrincipalException($"Sorry, no such user account found for the domain");
+			throw new NoMatchingPrincipalException("Sorry, no such user account found for the domain");
 
 		/*public static void AddUserToGroup(this PrincipalContext principalContext, string accountName, string groupName)
         {
@@ -148,5 +148,10 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 
         public static PrincipalSearchResult<Principal> GetGroupObjectsCollection(this PrincipalContext principalContext) =>
             new PrincipalSearcher(new GroupPrincipal(principalContext)).FindAll();
+
+        public static ComputerPrincipal GetComputerObjectByName(this PrincipalContext principalContext,
+	        string computerName) =>
+	        ComputerPrincipal.FindByIdentity(principalContext, IdentityType.Name, computerName) ??
+	        throw new NoMatchingPrincipalException("Sorry, no such computer account found for the domain");
     }
 }

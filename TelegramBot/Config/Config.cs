@@ -126,6 +126,8 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Config
 
 		public void RemoveUser(TelegramUser user)
 		{
+			TelegramUsers.Remove(user);
+
 			var xFile = new XmlDocument();
 
 			xFile.Load("Config.config");

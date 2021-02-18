@@ -11,7 +11,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Logger
 		Console = 2
 	}
 
-	// TODO Назначение вывода логов брать из конфига
+	// TODO Назначение и вкл-выкл вывода логов брать из конфига
 	internal class Logger : Decorator, ILogger
 	{
 		private static Logger _instance;

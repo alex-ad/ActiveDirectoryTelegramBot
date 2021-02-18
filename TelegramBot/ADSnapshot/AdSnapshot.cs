@@ -30,31 +30,51 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 		private static byte[] _cookie;
 		private static AdSnapshot _instance;
 		private static bool _enabled;
+		private static bool? _connected;
+
+		private CancellationTokenSource _cancellationTokenSource;
+		private CancellationToken _cancellationToken;
 		
 		private static IConfig _config;
 		private static ILogger _logger;
 		private static IComponent[] _decorators;
 
-		protected AdSnapshot() { }
+		protected AdSnapshot()
+		{
+			_cancellationTokenSource = new CancellationTokenSource();
+			_cancellationToken = _cancellationTokenSource.Token;
+		}
 
 		public static AdSnapshot Instance()
 		{
 			_instance = _instance ?? new AdSnapshot();
 			_adNotifyCollection = _adNotifyCollection ?? new AdNotifyCollection();
+			_connected = null;
 			return _instance;
 		}
 
 		private static void AdInit()
 		{
-			_directoryEntry = _directoryEntry ?? new DirectoryEntry("LDAP://" + _config.ServerAddress, _config.UserName, _config.UserPassword);
+			if (_connected == null)
+			{
+				try
+				{
+					_directoryEntry = _directoryEntry ?? new DirectoryEntry("LDAP://" + _config.ServerAddress, _config.UserName, _config.UserPassword);
+					_connected = true;
+				}
+				catch
+				{
+					_connected = false;
+					_logger.Log("Some error occured on Active Directory connecting", OutputTarget.Console);
+				}
+			}
+
+			if ( (bool)!_connected) return;
+				
 			_directorySearcher = _directorySearcher ?? new DirectorySearcher(_directoryEntry)
 			{
-				// TODO OU вынести в конфиг
-				Filter = "(|(&(objectClass=user)(objectCategory=person))(&(objectClass=computer)(objectCategory=computer))(&(objectClass=group)(objectCategory=group)))",
-				//Filter = "(|(isDeleted=TRUE)(&(objectClass=user))(&(objectClass=computer))(&(objectClass=group)))",
-				//Filter = "(|(isDeleted=TRUE)(&(objectClass=user))(&(objectClass=computer))(&(objectClass=group)))",
-				//Filter = "isDeleted=true",
-				SearchScope = SearchScope.OneLevel,
+				Filter = "(|(isDeleted=true)(&(objectClass=user)(objectCategory=person))(&(objectClass=computer)(objectCategory=computer))(&(objectClass=group)(objectCategory=group)))",
+				SearchScope = SearchScope.Subtree,
 				ExtendedDN = ExtendedDN.Standard,
 				Tombstone = true
 			};
@@ -64,6 +84,8 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 		private static void InitializeSnapshot()
 		{
 			AdInit();
+			if (_connected == false) return;
+
 			_directorySearcher.DirectorySynchronization = new DirectorySynchronization(DirectorySynchronizationOptions.ObjectSecurity);
 
 			foreach ( SearchResult res in _directorySearcher.FindAll() )
@@ -74,10 +96,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 
 		private static void CompareSnapshot()
 		{
-			// TODO вывести ошибку чтения кук
-			if ( _cookie == null )
-				return;
-
 			var dirSync = new DirectorySynchronization(DirectorySynchronizationOptions.ObjectSecurity, _cookie);
 
 			_directorySearcher = new DirectorySearcher(_directoryEntry)
@@ -91,7 +109,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 				var found = false;
 				foreach ( string prop in delta.PropertyNames )
 				{
-					// TODO список полей запихнуть в конфиг???
 					switch ( prop.ToLower() )
 					{
 						case "objectguid":
@@ -145,6 +162,11 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 		private static void ProcessChanged(DirectoryEntry directoryEntry, string prop, ResultPropertyCollection delta)
 		{
 			var schemeClass = directoryEntry.SchemaClassName ?? string.Empty;
+			
+			if (!schemeClass.Equals("computer", StringComparison.OrdinalIgnoreCase)
+			    || !schemeClass.Equals("user", StringComparison.OrdinalIgnoreCase)
+			    || !schemeClass.Equals("group", StringComparison.OrdinalIgnoreCase))
+				return;
 
 			foreach ( object val in delta[prop] )
 			{
@@ -172,7 +194,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 				return new AdNotifyMessageUserModified(schemeClass, name, property, val);
 		}
 
-		// TODO Добавить CancellationToken для остановки/перезапуска
 		public async void RunAsync(int loopPeriodInMilliseconds)
 		{
 			InitializeSnapshot();
@@ -182,15 +203,21 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 			{
 				while ( _enabled )
 				{
+					if ( _cancellationToken.IsCancellationRequested )
+					{
+						_enabled = false;
+						break;
+					}
 					CompareSnapshot();
-					//Task.Delay(loopPeriodInMilliseconds);
+					Task.Delay(loopPeriodInMilliseconds, _cancellationToken);
 				}
-			});
+			}, _cancellationToken);
 		}
 
 		public void Stop()
 		{
-			_enabled = false;
+			_cancellationTokenSource.Cancel();
+			_connected = null;
 		}
 
 		public override void Init(params IComponent[] decorators)
@@ -221,6 +248,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 			     string.IsNullOrEmpty(_config?.UserPassword) ) return;
 
 			Stop();
+			Thread.Sleep(1000);
 			RunAsync(3000);
 			AdNotifySender.Instance(this, _config);
 		}
