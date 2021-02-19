@@ -42,7 +42,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 				var response = msg.DoRequest(e.Message);
 				await response.Init();
 
-				await _bot.SendTextMessageAsync(e.Message.From.Id, response.Message);
+				await SendTextMessageAsync(e.Message.From.Id, response.Message);
 				if ( response.NeedToClean )
 					await _bot.DeleteMessageAsync(e.Message.Chat.Id, e.Message.MessageId);
 			} catch ( Exception ex )
@@ -83,6 +83,25 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 					_bot.SendTextMessageAsync(u, msg);
 				}
 			});
+		}
+
+		private static async Task SendTextMessageAsync(int chatId, string message)
+		{
+			if (message.Length <= 4096)
+			{
+				await _bot.SendTextMessageAsync(chatId, message);
+				return;
+			}
+
+			var loop = (message.Length / 4096) + (message.Length % 4096 == 0 ? 0 : 1);
+			var elapsed = 0;
+			
+			for (var i = 1; i <= loop; i++)
+			{
+				var count = elapsed + 4096 < message.Length ? 4096 : message.Length - elapsed;
+				await _bot.SendTextMessageAsync(chatId, message.Substring(elapsed, count));
+				elapsed += 4096;
+			}
 		}
 
 		public void Dispose()

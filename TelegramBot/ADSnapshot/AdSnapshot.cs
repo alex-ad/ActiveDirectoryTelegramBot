@@ -26,7 +26,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 
 		private static DirectoryEntry _directoryEntry;
 		private static DirectorySearcher _directorySearcher;
-		private static AdNotifyCollection _adNotifyCollection;
+		//private static AdNotifyCollection _adNotifyCollection;
 		private static byte[] _cookie;
 		private static AdSnapshot _instance;
 		private static bool _enabled;
@@ -48,49 +48,44 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 		public static AdSnapshot Instance()
 		{
 			_instance = _instance ?? new AdSnapshot();
-			_adNotifyCollection = _adNotifyCollection ?? new AdNotifyCollection();
+			//_adNotifyCollection = _adNotifyCollection ?? new AdNotifyCollection();
 			_connected = null;
 			return _instance;
 		}
 
 		private static void AdInit()
 		{
-			if (_connected == null)
+			if ( _connected == null )
 			{
 				try
 				{
 					_directoryEntry = _directoryEntry ?? new DirectoryEntry("LDAP://" + _config.ServerAddress, _config.UserName, _config.UserPassword);
+					_directorySearcher = _directorySearcher ?? new DirectorySearcher(_directoryEntry)
+					{
+						Filter = "(|(isDeleted=true)(&(objectClass=user)(objectCategory=person))(&(objectClass=computer)(objectCategory=computer))(&(objectClass=group)(objectCategory=group)))",
+						SearchScope = SearchScope.Subtree,
+						ExtendedDN = ExtendedDN.Standard,
+						Tombstone = true
+					};
+					_directorySearcher.PropertiesToLoad.AddRange(new[] { "lastknownparent", "whencreated", "whenchanged" });
+
+					_directorySearcher.DirectorySynchronization = new DirectorySynchronization(DirectorySynchronizationOptions.ObjectSecurity);
+
+					foreach ( SearchResult res in _directorySearcher.FindAll() )
+					{ }
+
 					_connected = true;
-				}
-				catch
+				} catch
 				{
 					_connected = false;
 					_logger.Log("Some error occured on Active Directory connecting", OutputTarget.Console);
 				}
 			}
-
-			if ( (bool)!_connected) return;
-				
-			_directorySearcher = _directorySearcher ?? new DirectorySearcher(_directoryEntry)
-			{
-				Filter = "(|(isDeleted=true)(&(objectClass=user)(objectCategory=person))(&(objectClass=computer)(objectCategory=computer))(&(objectClass=group)(objectCategory=group)))",
-				SearchScope = SearchScope.Subtree,
-				ExtendedDN = ExtendedDN.Standard,
-				Tombstone = true
-			};
-			_directorySearcher.PropertiesToLoad.AddRange(new[] { "lastknownparent", "whencreated", "whenchanged" });
 		}
 
 		private static void InitializeSnapshot()
 		{
-			AdInit();
-			if (_connected == false) return;
-
-			_directorySearcher.DirectorySynchronization = new DirectorySynchronization(DirectorySynchronizationOptions.ObjectSecurity);
-
-			foreach ( SearchResult res in _directorySearcher.FindAll() )
-			{ }
-
+			if ((bool)!_connected) return;
 			_cookie = _directorySearcher.DirectorySynchronization.GetDirectorySynchronizationCookie();
 		}
 
@@ -164,8 +159,8 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 			var schemeClass = directoryEntry.SchemaClassName ?? string.Empty;
 			
 			if (!schemeClass.Equals("computer", StringComparison.OrdinalIgnoreCase)
-			    || !schemeClass.Equals("user", StringComparison.OrdinalIgnoreCase)
-			    || !schemeClass.Equals("group", StringComparison.OrdinalIgnoreCase))
+			    && !schemeClass.Equals("user", StringComparison.OrdinalIgnoreCase)
+			    && !schemeClass.Equals("group", StringComparison.OrdinalIgnoreCase))
 				return;
 
 			foreach ( object val in delta[prop] )
@@ -174,7 +169,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 				var parent = directoryEntry?.Parent.Name ?? string.Empty;
 				if ( name.Equals(val.ToString(), StringComparison.OrdinalIgnoreCase) )
 					continue;
-				_adNotifyCollection.Push(CreateNotifyMessage(schemeClass, name, prop, val, parent));
+				//_adNotifyCollection.Push(CreateNotifyMessage(schemeClass, name, prop, val, parent));
 			}
 		}
 
@@ -188,6 +183,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 			else
 				val = value.ToString();
 
+			// TODO !!! доделать
 			if ( schemeClass.Equals("computer", StringComparison.OrdinalIgnoreCase) )
 				return new AdNotifyMessageUserModified(schemeClass, name, property, val);
 			else
@@ -196,6 +192,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 
 		public async void RunAsync(int loopPeriodInMilliseconds)
 		{
+			AdInit();
 			InitializeSnapshot();
 			_enabled = true;
 
@@ -237,7 +234,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 
 			Config.Config.OnConfigUpdated += Config_OnConfigUpdated;
 			RunAsync(3000);
-			AdNotifySender.Instance(this, _config);
+			//AdNotifySender.Instance(this, _config);
 		}
 
 		private void Config_OnConfigUpdated(IConfig config)
@@ -250,7 +247,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 			Stop();
 			Thread.Sleep(1000);
 			RunAsync(3000);
-			AdNotifySender.Instance(this, _config);
+			//AdNotifySender.Instance(this, _config);
 		}
 	}
 }

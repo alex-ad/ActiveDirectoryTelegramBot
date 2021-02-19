@@ -24,6 +24,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 			_config = config;
 		}
 
+		// TODO ловить команды только от активных сервисов
 		public ResponseBase DoRequest(Message msg)
 		{
 			if ( string.IsNullOrEmpty(msg.Text) )

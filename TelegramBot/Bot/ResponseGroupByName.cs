@@ -33,15 +33,15 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 
 				var sb = new StringBuilder($"<<< Data for {MessagesIn[1]} >>>" + Environment.NewLine);
 
-				var userData = new GroupInfo
+				var groupData = new GroupInfo
 				{
 					Name = groupPrincipal.DistinguishedName,
 					Description = groupPrincipal.Description
 				};
 
-				var groupData = new List<string>(_ad.GetUserNamesByGroupObject(groupPrincipal)).OrderBy(x => x);
+				var userData = new List<string>(_ad.GetUserNamesByGroupObject(groupPrincipal)).OrderBy(x => x);
 
-				sb.AppendLine(ParseResponseObject(userData)).AppendLine(ParseResponseList(groupData));
+				sb.AppendLine(ParseResponseObject(groupData)).AppendLine(ParseResponseList(userData));
 
 				Message = sb.ToString();
 			});
