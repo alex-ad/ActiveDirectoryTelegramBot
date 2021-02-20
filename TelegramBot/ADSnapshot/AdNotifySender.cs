@@ -21,7 +21,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 		private static AdNotifyCollection _adNotifier;
 		private static bool _active;
 
-		protected AdNotifySender() { }
+		private AdNotifySender() { }
 
 		public static AdNotifySender Instance(IAdSnapshot adSnapshot, IConfig config)
 		{

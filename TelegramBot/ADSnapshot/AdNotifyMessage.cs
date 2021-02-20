@@ -15,7 +15,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 		public string Property { get; set; }
 		public string Value { get; set; }
 
-		protected AdNotifyMessage() { }
+		private AdNotifyMessage() { }
 
 		protected AdNotifyMessage(AdNotifyType.ChangingObjectType changingObject, AdNotifyType.ChangingOperationType changingOperation, string schemeClass, string name, string property, string value)
 		{

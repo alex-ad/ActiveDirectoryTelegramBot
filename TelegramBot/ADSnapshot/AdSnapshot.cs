@@ -26,7 +26,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 
 		private static DirectoryEntry _directoryEntry;
 		private static DirectorySearcher _directorySearcher;
-		//private static AdNotifyCollection _adNotifyCollection;
+		private static AdNotifyCollection _adNotifyCollection;
 		private static byte[] _cookie;
 		private static AdSnapshot _instance;
 		private static bool _enabled;
@@ -48,14 +48,14 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 		public static AdSnapshot Instance()
 		{
 			_instance = _instance ?? new AdSnapshot();
-			//_adNotifyCollection = _adNotifyCollection ?? new AdNotifyCollection();
+			_adNotifyCollection = _adNotifyCollection ?? new AdNotifyCollection();
 			_connected = null;
 			return _instance;
 		}
 
 		private static void AdInit()
 		{
-			if ( _connected == null )
+			if ( _connected == null || (bool)!_connected)
 			{
 				try
 				{
@@ -85,7 +85,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 
 		private static void InitializeSnapshot()
 		{
-			if ((bool)!_connected) return;
 			_cookie = _directorySearcher.DirectorySynchronization.GetDirectorySynchronizationCookie();
 		}
 
@@ -100,7 +99,8 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 
 			foreach ( SearchResult res in _directorySearcher.FindAll() )
 			{
-				var delta = res.Properties;
+				var delta = res?.Properties;
+				if (delta == null) continue;
 				var found = false;
 				foreach ( string prop in delta.PropertyNames )
 				{
@@ -109,6 +109,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 						case "objectguid":
 						case "adspath":
 						case "instancetype":
+						//case "distinguishedname":
 							break;
 						case "cn":
 						case "name":
@@ -125,6 +126,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 						case "l":
 						case "mail":
 						case "memberof":
+						case "member":
 						case "physicaldeliveryofficename":
 						case "sn":
 						case "telephonenumber":
@@ -169,7 +171,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 				var parent = directoryEntry?.Parent.Name ?? string.Empty;
 				if ( name.Equals(val.ToString(), StringComparison.OrdinalIgnoreCase) )
 					continue;
-				//_adNotifyCollection.Push(CreateNotifyMessage(schemeClass, name, prop, val, parent));
+				_adNotifyCollection.Push(CreateNotifyMessage(schemeClass, name, prop, val, parent));
 			}
 		}
 
@@ -183,16 +185,18 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 			else
 				val = value.ToString();
 
-			// TODO !!! доделать
+			// Заготовка для будущего использования
+			if ( schemeClass.Equals("user", StringComparison.OrdinalIgnoreCase) )
+				return new AdNotifyMessageUserModified(schemeClass, name, property, val);
 			if ( schemeClass.Equals("computer", StringComparison.OrdinalIgnoreCase) )
-				return new AdNotifyMessageUserModified(schemeClass, name, property, val);
-			else
-				return new AdNotifyMessageUserModified(schemeClass, name, property, val);
+				return new AdNotifyMessageComputerModified(schemeClass, name, property, val);
+			return new AdNotifyMessageGroupModified(schemeClass, name, property, val);
 		}
 
 		public async void RunAsync(int loopPeriodInMilliseconds)
 		{
 			AdInit();
+			if ((bool)!_connected) return;
 			InitializeSnapshot();
 			_enabled = true;
 
@@ -206,7 +210,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 						break;
 					}
 					CompareSnapshot();
-					Task.Delay(loopPeriodInMilliseconds, _cancellationToken);
+					Thread.Sleep(loopPeriodInMilliseconds);
 				}
 			}, _cancellationToken);
 		}
@@ -234,7 +238,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 
 			Config.Config.OnConfigUpdated += Config_OnConfigUpdated;
 			RunAsync(3000);
-			//AdNotifySender.Instance(this, _config);
+			AdNotifySender.Instance(this, _config);
 		}
 
 		private void Config_OnConfigUpdated(IConfig config)
@@ -247,7 +251,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 			Stop();
 			Thread.Sleep(1000);
 			RunAsync(3000);
-			//AdNotifySender.Instance(this, _config);
+			AdNotifySender.Instance(this, _config);
 		}
 	}
 }

@@ -73,6 +73,8 @@
   <ItemGroup>
     <Compile Include="ADSnapshot\AdNotifyCollection.cs" />
     <Compile Include="ADSnapshot\AdNotifyMessage.cs" />
+    <Compile Include="ADSnapshot\AdNotifyMessageComputerModified.cs" />
+    <Compile Include="ADSnapshot\AdNotifyMessageGroupModified.cs" />
     <Compile Include="ADSnapshot\AdNotifyMessageUserModified.cs" />
     <Compile Include="ADSnapshot\AdNotifySender.cs" />
     <Compile Include="ADSnapshot\AdNotifyType.cs" />

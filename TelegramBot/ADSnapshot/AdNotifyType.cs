@@ -11,7 +11,8 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 		public enum ChangingObjectType
 		{
 			Computer,
-			User
+			User,
+			Group
 		}
 
 		public enum ChangingOperationType
