@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.AD;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.AD;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Models;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
@@ -31,9 +31,9 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 				if ( userPrincipal == null )
 					return;
 
-				var sb = new StringBuilder($"<<< Data for {MessagesIn[1]} {MessagesIn[2]} {MessagesIn[3]} >>>" + Environment.NewLine);
+				var sb = new StringBuilder();
 
-				var userData = new UserInfoExt
+				var userData = new UserInfo
 				{
 					Enabled = userPrincipal.Enabled.Value,
 					Name = userPrincipal.DisplayName,
@@ -47,7 +47,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 					Description = userPrincipal.Description
 				};
 
-				var groupData = new List<string>(_ad.GetGroupsByUser(userPrincipal)).OrderBy(x => x);
+				var groupData = new List<string>(_ad.GetGroupsByUserObject(userPrincipal)).OrderBy(x => x);
 
 				sb.AppendLine(ParseResponseObject(userData)).AppendLine(ParseResponseList(groupData));
 

@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.AD;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Bot;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.Config;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.Logger;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.AD;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Config;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Logger;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Service
 {
@@ -48,11 +48,11 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Service
 
 		public void Init(params IComponent[] decorators)
 		{
-			HelpMsg.HelpMsg.MsgList = new List<string>();
+			HelpMsg.HelpMessage.MsgList = new List<string>();
 			_decorators = decorators;
-			_logger = _decorators?.OfType<Logger.Logger>().FirstOrDefault();
-			_config = _decorators?.OfType<Config.Config>().FirstOrDefault();
-			_ad = _decorators?.OfType<Ad>().FirstOrDefault();
+			_logger = _decorators?.OfType<ILogger>().FirstOrDefault();
+			_config = _decorators?.OfType<IConfig>().FirstOrDefault();
+			_ad = _decorators?.OfType<IAdReader>().FirstOrDefault();
 
 			_services[0].Component = new TelegramBot(_logger, _ad, _config);
 

@@ -1,23 +1,14 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.DirectoryServices;
-using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.Bot;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.Config;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.Logger;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Config;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Logger;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.HelpMsg;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Service;
 
-
-namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
+namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 {
 	public class AdSnapshot : Decorator, IAdSnapshot
 	{
@@ -32,14 +23,14 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 		private static bool _enabled;
 		private static bool? _connected;
 
-		private CancellationTokenSource _cancellationTokenSource;
+		private readonly CancellationTokenSource _cancellationTokenSource;
 		private CancellationToken _cancellationToken;
 		
 		private static IConfig _config;
 		private static ILogger _logger;
 		private static IComponent[] _decorators;
 
-		protected AdSnapshot()
+		private AdSnapshot()
 		{
 			_cancellationTokenSource = new CancellationTokenSource();
 			_cancellationToken = _cancellationTokenSource.Token;
@@ -109,7 +100,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 						case "objectguid":
 						case "adspath":
 						case "instancetype":
-						//case "distinguishedname":
 							break;
 						case "cn":
 						case "name":
@@ -151,6 +141,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 			}
 		}
 
+		// TODO v2 Заготовка для будущего использования
 		private static void ProcessDeleted(string prop, ResultPropertyCollection delta)
 		{
 			
@@ -185,7 +176,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 			else
 				val = value.ToString();
 
-			// Заготовка для будущего использования
+			// TODO v2 Заготовка для будущего использования
 			if ( schemeClass.Equals("user", StringComparison.OrdinalIgnoreCase) )
 				return new AdNotifyMessageUserModified(schemeClass, name, property, val);
 			if ( schemeClass.Equals("computer", StringComparison.OrdinalIgnoreCase) )
@@ -215,7 +206,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 			}, _cancellationToken);
 		}
 
-		public void Stop()
+		private void Stop()
 		{
 			_cancellationTokenSource.Cancel();
 			_connected = null;
@@ -225,8 +216,8 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 		{
 			base.Init(decorators);
 
-			HelpMsg.HelpMsg.MsgList.Add("/NotificationsOn [/non] - Subscribe to notifications on AD changes");
-			HelpMsg.HelpMsg.MsgList.Add("/NotificationsOff [/noff] - Unsubscribe to notifications on AD changes");
+			HelpMessage.MsgList.Add("/NotificationsOn [/non] -uUSER_AD_ACCOUNT_NAME -pUSER_AD_PASSWORD : Subscribe to notifications on AD changes");
+			HelpMessage.MsgList.Add("/NotificationsOff [/nof] : Unsubscribe to notifications on AD changes");
 
 			_decorators = decorators;
 			_logger = _decorators?.OfType<ILogger>().FirstOrDefault();
@@ -238,7 +229,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 
 			Config.Config.OnConfigUpdated += Config_OnConfigUpdated;
 			RunAsync(3000);
-			AdNotifySender.Instance(this, _config);
+			AdNotifySender.Instance();
 		}
 
 		private void Config_OnConfigUpdated(IConfig config)
@@ -251,7 +242,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 			Stop();
 			Thread.Sleep(1000);
 			RunAsync(3000);
-			AdNotifySender.Instance(this, _config);
+			AdNotifySender.Instance();
 		}
 	}
 }

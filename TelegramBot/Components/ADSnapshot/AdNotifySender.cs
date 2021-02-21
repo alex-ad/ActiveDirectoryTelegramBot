@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.Bot;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.Config;
+﻿using System.Threading.Tasks;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Config;
 
-namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
+namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 {
 	internal class AdNotifySender
 	{
@@ -16,18 +10,14 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 		public static event BroadcastMessage OnBroadcastMessage;
 
 		private static AdNotifySender _instance;
-		private static IConfig _config;
-		private static IAdSnapshot _adSnapshot;
 		private static AdNotifyCollection _adNotifier;
 		private static bool _active;
 
 		private AdNotifySender() { }
 
-		public static AdNotifySender Instance(IAdSnapshot adSnapshot, IConfig config)
+		public static AdNotifySender Instance()
 		{
 			_instance = _instance ?? new AdNotifySender();
-			_config = config;
-			_adSnapshot = adSnapshot;
 			_adNotifier = _adNotifier ?? new AdNotifyCollection();
 			_active = false;
 			AdSnapshot.OnAdChanged += SendNotifyFromQueue;

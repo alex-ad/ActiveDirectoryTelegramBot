@@ -2,7 +2,7 @@
 using System.IO;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Service;
 
-namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Logger
+namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Logger
 {
 	[Flags]
 	public enum OutputTarget
@@ -11,7 +11,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Logger
 		Console = 2
 	}
 
-	// TODO Назначение и вкл-выкл вывода логов брать из конфига
+	// TODO v2 Назначение и вкл-выкл вывода логов брать из конфига
 	internal class Logger : Decorator, ILogger
 	{
 		private static Logger _instance;

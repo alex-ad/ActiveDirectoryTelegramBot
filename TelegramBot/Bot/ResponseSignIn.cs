@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.AD;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.Config;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.AD;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Config;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Models;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot

@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
 
-namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
+namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 {
 	internal class AdNotifyCollection
 	{
-		//private static Queue<AdNotifyMessage> NotifyMessages { get; }
 		private static ConcurrentDictionary<string, AdNotifyMessage> NotifyMessages { get; }
 		public static int Count => NotifyMessages.Count;
 

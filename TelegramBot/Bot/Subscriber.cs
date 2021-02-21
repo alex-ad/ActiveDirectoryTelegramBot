@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.AD;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.Config;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.AD;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Config;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Models;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
@@ -19,7 +19,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 		public Subscriber(int userId, IConfig config, IAdReader ad)
 		{
 			_telegramUserId = userId;
-			_config = (Config.Config)config;
+			_config = (Config)config;
 			_ad = ad;
 		}
 

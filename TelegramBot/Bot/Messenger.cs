@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.AD;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.Config;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.AD;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Config;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Models;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Service;
 using Telegram.Bot.Types;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
@@ -16,15 +18,16 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 		private readonly IAdReader _ad;
 		private readonly User _telegramUser;
 		private readonly IConfig _config;
+		private readonly IComponent[] _decorators;
 
-		public Messenger(IAdReader ad, User telegramUser, IConfig config)
+		public Messenger(IAdReader ad, User telegramUser, IConfig config, IComponent[] decorators)
 		{
 			_ad = ad;
 			_telegramUser = telegramUser;
 			_config = config;
+			_decorators = decorators;
 		}
 
-		// TODO ловить команды только от активных сервисов
 		public ResponseBase DoRequest(Message msg)
 		{
 			if ( string.IsNullOrEmpty(msg.Text) )
@@ -35,17 +38,29 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 
 			if ( msgParts[0].EqualsOneOfTheValues(Commands.Help))
 				return new ResponseHelp();
-			if ( msgParts[0].EqualsOneOfTheValues(Commands.UserInfoByLogin) )
+			
+			if (_decorators.OfType<IAdReader>()?.FirstOrDefault() != null &&
+			    msgParts[0].EqualsOneOfTheValues(Commands.UserInfoByLogin))
 				return new ResponseUserByLogin(msgParts, _ad);
-			if ( msgParts[0].EqualsOneOfTheValues(Commands.UserInfoByName) )
+			
+			if (_decorators.OfType<IAdReader>()?.FirstOrDefault() != null &&
+			    msgParts[0].EqualsOneOfTheValues(Commands.UserInfoByName))
 				return new ResponseUserByName(msgParts, _ad);
-			if ( msgParts[0].EqualsOneOfTheValues(Commands.NotificationsOn) )
+			
+			if (_decorators.OfType<IAdSnapshot>()?.FirstOrDefault() != null &&
+			    msgParts[0].EqualsOneOfTheValues(Commands.NotificationsOn))
 				return new ResponseSignIn(msgParts, _ad, _config, _telegramUser.Id);
-			if (msgParts[0].EqualsOneOfTheValues(Commands.NotificationsOff))
+			
+			if (_decorators.OfType<IAdSnapshot>()?.FirstOrDefault() != null &&
+			    msgParts[0].EqualsOneOfTheValues(Commands.NotificationsOff))
 				return new ResponseSignOut(_ad, _config, _telegramUser.Id);
-			if ( msgParts[0].EqualsOneOfTheValues(Commands.ComputerInfo) )
+			
+			if (_decorators.OfType<IAdReader>()?.FirstOrDefault() != null &&
+			    msgParts[0].EqualsOneOfTheValues(Commands.ComputerInfo))
 				return new ResponseComputerByName(msgParts, _ad);
-			if ( msgParts[0].EqualsOneOfTheValues(Commands.GroupInfo) )
+			
+			if (_decorators.OfType<IAdReader>()?.FirstOrDefault() != null &&
+			    msgParts[0].EqualsOneOfTheValues(Commands.GroupInfo))
 				return new ResponseGroupByName(msgParts, _ad);
 
 			return new ResponseHelp();

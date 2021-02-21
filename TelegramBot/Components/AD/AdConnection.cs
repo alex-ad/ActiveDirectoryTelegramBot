@@ -1,22 +1,22 @@
 ﻿using System;
 using System.DirectoryServices.AccountManagement;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.Config;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.Logger;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Config;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Logger;
 
-namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
+namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.AD
 {
 	internal class AdConnection
     {
         private static AdConnection _instance;
-        private static Logger.Logger _logger;
-        private static Config.Config _config;
+        private static ILogger _logger;
+        private static IConfig _config;
 
-        protected AdConnection() { }
+        private AdConnection() { }
         
         public static AdConnection Instance(ILogger logger, IConfig config)
         {
-	        _logger = (Logger.Logger)logger;
-	        _config = (Config.Config)config;
+	        _logger = logger;
+	        _config = config;
 			_instance = _instance ?? new AdConnection();
 	        return _instance;
         }

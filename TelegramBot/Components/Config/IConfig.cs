@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Models;
 
-namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Config
+namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Config
 {
 	internal interface IConfig
 	{

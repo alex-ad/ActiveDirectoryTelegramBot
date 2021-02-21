@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.AD;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.AD;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Models;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
@@ -31,7 +31,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 				if ( groupPrincipal == null )
 					return;
 
-				var sb = new StringBuilder($"<<< Data for {MessagesIn[1]} >>>" + Environment.NewLine);
+				var sb = new StringBuilder();
 
 				var groupData = new GroupInfo
 				{

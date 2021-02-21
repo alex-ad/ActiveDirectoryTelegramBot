@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
+﻿namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 {
 	internal static class AdNotifyType
 	{
@@ -15,6 +9,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
 			Group
 		}
 
+		// TODO v2 Заготовка для будущего использования
 		public enum ChangingOperationType
 		{
 			Added,

@@ -4,11 +4,11 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.XPath;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.Logger;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Logger;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Models;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Service;
 
-namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Config
+namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Config
 {
 	internal class Config : Decorator, IConfig
 	{
@@ -199,6 +199,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Config
 			}
 		}
 
+		// TODO v2 Заготовка для будущего использования
 		private AdNotifications ParseAdNotifications(XmlNode node)
 		{
 			return (bool.TryParse(node.SelectSingleNode("//Notifications/UserInfoChanged")?.InnerText.Trim(), out bool uic) ? uic ? AdNotifications.UserInfoChanged : 0 : 0) &

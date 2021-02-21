@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
+﻿namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 {
 	internal abstract class AdNotifyMessage
 	{
-		public AdNotifyType.ChangingObjectType Object { get; }
-		public AdNotifyType.ChangingOperationType Operation { get; }
-		public string SchemeClass { get; set; }
-		public string Name { get; set; }
+		private AdNotifyType.ChangingObjectType Object { get; }
+		private AdNotifyType.ChangingOperationType Operation { get; }
+		public string SchemeClass { get; }
+		public string Name { get; }
 		public string Property { get; set; }
 		public string Value { get; set; }
 

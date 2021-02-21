@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.AD;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.Config;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.Logger;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.AD;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Config;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Logger;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Service;
 using Telegram.Bot;
 using Telegram.Bot.Exceptions;
@@ -21,6 +21,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 		private static IAdReader _ad;
 		private static ILogger _logger;
 		private static IConfig _config;
+		private static IComponent[] _decorators;
 
 		public TelegramBot(ILogger logger, IAdReader adReader, IConfig config)
 		{
@@ -28,14 +29,14 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 			_logger = logger;
 			_config = config;
 
-			_logger.Log("Starting Bot", OutputTarget.Console | OutputTarget.File);
+			_logger.Log("Starting Bot...", OutputTarget.Console | OutputTarget.File);
 		}
 
 		private static async void Bot_OnMessage(object sender, Telegram.Bot.Args.MessageEventArgs e)
 		{
 			if (e.Message?.Type != MessageType.Text)
 				return;
-			var msg = new Messenger(_ad, e.Message.From, _config);
+			var msg = new Messenger(_ad, e.Message.From, _config, _decorators);
 
 			try
 			{
@@ -112,7 +113,8 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 
 		public void Init(params IComponent[] decorators)
 		{
-			Config.Config.OnConfigUpdated += Config_OnConfigUpdated;
+			_decorators = decorators;
+			Config.OnConfigUpdated += Config_OnConfigUpdated;
 			AdNotifySender.OnBroadcastMessage += AdNotifySender_OnBroadcastMessage;
 		}
 

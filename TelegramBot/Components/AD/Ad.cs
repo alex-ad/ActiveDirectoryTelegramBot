@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.DirectoryServices.AccountManagement;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.Config;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.Logger;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Config;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Logger;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.HelpMsg;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Service;
 
-namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
+namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.AD
 {
 	internal class Ad : Decorator, IAdReader
 	{
@@ -19,8 +17,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 		private static PrincipalContext _adContext;
 		private static Ad _instance;
 		private static IConfig _config;
-
-		public AdReader Request => _ad;
 
 		private Ad() { }
 
@@ -34,10 +30,10 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 		{
 			base.Init(decorators);
 
-			HelpMsg.HelpMsg.MsgList.Add("/UserByLogin [/ul][/u] - Get user data by AccountName");
-			HelpMsg.HelpMsg.MsgList.Add("/UserByName [/un] - Get user data by FullName (DisplayName)");
-			HelpMsg.HelpMsg.MsgList.Add("/Group [/g] - Get group data by GroupName");
-			HelpMsg.HelpMsg.MsgList.Add("/Computer [/c] - Get computer data by ComputerName");
+			HelpMessage.MsgList.Add("/UserByLogin [/ul][/u] : Get user data by AccountName");
+			HelpMessage.MsgList.Add("/UserByName [/un] : Get user data by FullName (DisplayName)");
+			HelpMessage.MsgList.Add("/Group [/g] : Get group data by GroupName");
+			HelpMessage.MsgList.Add("/Computer [/c] : Get computer data by ComputerName");
 
 			_decorators = decorators;
 			_logger = _decorators?.OfType<ILogger>().FirstOrDefault();
@@ -67,8 +63,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 		public string GetUserProperty(UserPrincipal userPrincipal, string propertyName) =>
 			_ad.GetUserProperty(userPrincipal, propertyName);
 
-		public IEnumerable<string> GetGroupsByUser(UserPrincipal userPrincipal) => _ad.GetGroupsByUser(userPrincipal);
-
 		public IEnumerable<string> GetUserNamesByGroupObject(GroupPrincipal groupPrincipal) =>
 			_ad.GetUserNamesByGroupObject(groupPrincipal);
 
@@ -80,5 +74,8 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.AD
 			_ad.GetComputerObjectByName(computerName);
 
 		public GroupPrincipal GetGroupObjectByName(string groupName) => _ad.GetGroupObjectByName(groupName);
+
+		public IEnumerable<string> GetGroupsByUserObject(UserPrincipal userPrincipal) =>
+			_ad.GetGroupsByUserObject(userPrincipal);
 	}
 }

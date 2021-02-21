@@ -71,21 +71,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ADSnapshot\AdNotifyCollection.cs" />
-    <Compile Include="ADSnapshot\AdNotifyMessage.cs" />
-    <Compile Include="ADSnapshot\AdNotifyMessageComputerModified.cs" />
-    <Compile Include="ADSnapshot\AdNotifyMessageGroupModified.cs" />
-    <Compile Include="ADSnapshot\AdNotifyMessageUserModified.cs" />
-    <Compile Include="ADSnapshot\AdNotifySender.cs" />
-    <Compile Include="ADSnapshot\AdNotifyType.cs" />
-    <Compile Include="ADSnapshot\AdSnapshot.cs" />
-    <Compile Include="ADSnapshot\AdType.cs" />
-    <Compile Include="ADSnapshot\IAdSnapshot.cs" />
-    <Compile Include="AD\AdConnection.cs" />
-    <Compile Include="AD\Ad.cs" />
-    <Compile Include="AD\AdReader.cs" />
-    <Compile Include="AD\AdTree.cs" />
-    <Compile Include="AD\IAdReader.cs" />
+    <Compile Include="Components\ADSnapshot\AdNotifyCollection.cs" />
+    <Compile Include="Components\ADSnapshot\AdNotifyMessage.cs" />
+    <Compile Include="Components\ADSnapshot\AdNotifyMessageComputerModified.cs" />
+    <Compile Include="Components\ADSnapshot\AdNotifyMessageGroupModified.cs" />
+    <Compile Include="Components\ADSnapshot\AdNotifyMessageUserModified.cs" />
+    <Compile Include="Components\ADSnapshot\AdNotifySender.cs" />
+    <Compile Include="Components\ADSnapshot\AdNotifyType.cs" />
+    <Compile Include="Components\ADSnapshot\AdSnapshot.cs" />
+    <Compile Include="Components\ADSnapshot\AdType.cs" />
+    <Compile Include="Components\ADSnapshot\IAdSnapshot.cs" />
+    <Compile Include="Components\AD\AdConnection.cs" />
+    <Compile Include="Components\AD\Ad.cs" />
+    <Compile Include="Components\AD\AdReader.cs" />
+    <Compile Include="Components\AD\IAdReader.cs" />
     <Compile Include="Bot\Commands.cs" />
     <Compile Include="Bot\Extensions.cs" />
     <Compile Include="Bot\Messenger.cs" />
@@ -99,19 +98,16 @@
     <Compile Include="Bot\ResponseUserByName.cs" />
     <Compile Include="Bot\Subscriber.cs" />
     <Compile Include="Bot\TelegramBot.cs" />
-    <Compile Include="Config\Config.cs" />
-    <Compile Include="Config\IConfig.cs" />
-    <Compile Include="HelpMsg\HelpMsg.cs" />
-    <Compile Include="Logger\ILogger.cs" />
-    <Compile Include="Logger\Logger.cs" />
+    <Compile Include="Components\Config\Config.cs" />
+    <Compile Include="Components\Config\IConfig.cs" />
+    <Compile Include="HelpMsg\HelpMessage.cs" />
+    <Compile Include="Components\Logger\ILogger.cs" />
+    <Compile Include="Components\Logger\Logger.cs" />
     <Compile Include="Models\ComputerInfo.cs" />
     <Compile Include="Models\GroupInfo.cs" />
-    <Compile Include="Models\GroupUsersInfo.cs" />
     <Compile Include="Models\ObjectInfo.cs" />
     <Compile Include="Models\TelegramUser.cs" />
-    <Compile Include="Models\UserGroupsInfo.cs" />
     <Compile Include="Models\UserInfo.cs" />
-    <Compile Include="Models\UserInfoExt.cs" />
     <Compile Include="Service.cs">
       <SubType>Component</SubType>
     </Compile>

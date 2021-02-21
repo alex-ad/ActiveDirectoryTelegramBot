@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AlexAd.ActiveDirectoryTelegramBot.Bot.ADSnapshot
+﻿namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 {
 	internal class AdNotifyMessageUserModified : AdNotifyMessage
 	{

@@ -7,7 +7,7 @@ using AlexAd.ActiveDirectoryTelegramBot.Bot.Service;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.HelpMsg
 {
-	public class HelpMsg
+	public static class HelpMessage
 	{
 		public static List<string> MsgList { get; set; } = new List<string>();
 	}
