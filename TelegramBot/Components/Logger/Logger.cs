@@ -12,14 +12,31 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Logger
 	}
 
 	// TODO v2 Назначение и вкл-выкл вывода логов брать из конфига
+	/// <summary>
+	///		Вывод логов в консоль или(и) файл
+	/// </summary>
 	internal class Logger : Decorator, ILogger
 	{
 		private static Logger _instance;
 
-		private static string _fileName = "log.txt";
+		private static readonly string _fileName = "log.txt";
 		private static DateTime _time;
 
-		private Logger() { }
+		private Logger()
+		{
+		}
+
+		/// <summary>
+		///		Вывод логов в консоль или(и) файл
+		/// </summary>
+		/// <param name="message">Текстовое сообщение</param>
+		/// <param name="outputTarget">Вывод: консоль, файл</param>
+		public void Log(string message, OutputTarget outputTarget)
+		{
+			_time = DateTime.Now;
+			if ((outputTarget & OutputTarget.File) != 0) LogToFile(message);
+			if ((outputTarget & OutputTarget.Console) != 0) LogToConsole(message);
+		}
 
 		public static Logger Instance()
 		{
@@ -31,13 +48,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Logger
 		{
 			base.Init(decorators);
 			Log("Initializing Service: Logger...", OutputTarget.Console);
-		}
-
-		public void Log(string message, OutputTarget outputTarget)
-		{
-			_time = DateTime.Now;
-			if ((outputTarget & OutputTarget.File) != 0) LogToFile(message);
-			if ((outputTarget & OutputTarget.Console) != 0) LogToConsole(message);
 		}
 
 		private static void LogToConsole(string message)

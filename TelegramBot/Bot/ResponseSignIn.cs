@@ -1,21 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.AD;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Config;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.Models;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 {
-	class ResponseSignIn : ResponseBase
+	/// <summary>
+	///		Ответ на запрос о получении оповещений об изменениях в Active Directory
+	/// </summary>
+	/// <remarks>Наследник класса ResponseBase</remarks>
+	internal class ResponseSignIn : ResponseBase
 	{
 		private readonly IAdReader _ad;
 		private readonly IConfig _config;
 		private readonly int _userId;
 
-		public ResponseSignIn(List<string> message, IAdReader ad, IConfig config, int userId) : base()
+		/// <summary>
+		///		Ответ на запрос о получении оповещений об изменениях в Active Directory
+		/// </summary>
+		/// <param name="message">Запрос в виде списка подстрок</param>
+		/// <param name="ad">Контекст подключения к Active Directory</param>
+		/// <param name="config">Настройки приложения из файла Config.config</param>
+		/// <param name="userId">Id пользователя, отправившего запрос в чате</param>
+		public ResponseSignIn(List<string> message, IAdReader ad, IConfig config, int userId)
 		{
 			MessagesIn = message;
 			_ad = ad;
@@ -24,29 +33,33 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 			NeedToClean = true;
 		}
 
+		/// <summary>
+		///		Включение оповещений об изменениях в Active Directory
+		/// </summary>
+		/// <returns></returns>
 		public override async Task Init()
 		{
 			await base.Init();
 
-			if ( MessagesIn.Count() < 3 || string.IsNullOrEmpty(MessagesIn[1]) || string.IsNullOrEmpty(MessagesIn[2]) )
+			if (MessagesIn.Count() < 3 || string.IsNullOrEmpty(MessagesIn[1]) || string.IsNullOrEmpty(MessagesIn[2]))
 				return;
-			if ( MessagesIn[1].Length < 3 || MessagesIn[2].Length < 3 )
+			if (MessagesIn[1].Length < 3 || MessagesIn[2].Length < 3)
 				return;
 
 			var userName = string.Empty;
 			var userPassword = string.Empty;
 
-			if ( MessagesIn[1].Substring(0, 2).Equals("-u", StringComparison.OrdinalIgnoreCase) )
+			if (MessagesIn[1].Substring(0, 2).Equals("-u", StringComparison.OrdinalIgnoreCase))
 				userName = MessagesIn[1].Substring(2);
-			else if ( MessagesIn[1].Substring(0, 2).Equals("-p", StringComparison.OrdinalIgnoreCase) )
+			else if (MessagesIn[1].Substring(0, 2).Equals("-p", StringComparison.OrdinalIgnoreCase))
 				userPassword = MessagesIn[1].Substring(2);
 
-			if ( MessagesIn[2].Substring(0, 2).Equals("-u", StringComparison.OrdinalIgnoreCase) )
+			if (MessagesIn[2].Substring(0, 2).Equals("-u", StringComparison.OrdinalIgnoreCase))
 				userName = MessagesIn[2].Substring(2);
-			else if ( MessagesIn[2].Substring(0, 2).Equals("-p", StringComparison.OrdinalIgnoreCase) )
+			else if (MessagesIn[2].Substring(0, 2).Equals("-p", StringComparison.OrdinalIgnoreCase))
 				userPassword = MessagesIn[2].Substring(2);
 
-			if ( string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(userPassword) )
+			if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(userPassword))
 				return;
 
 			await Task.Run(() =>

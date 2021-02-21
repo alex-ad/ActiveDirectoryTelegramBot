@@ -75,6 +75,7 @@
     <Compile Include="Components\ADSnapshot\AdNotifyMessage.cs" />
     <Compile Include="Components\ADSnapshot\AdNotifyMessageComputerModified.cs" />
     <Compile Include="Components\ADSnapshot\AdNotifyMessageGroupModified.cs" />
+    <Compile Include="Components\ADSnapshot\AdNotifyMessageObjectDeleted.cs" />
     <Compile Include="Components\ADSnapshot\AdNotifyMessageUserModified.cs" />
     <Compile Include="Components\ADSnapshot\AdNotifySender.cs" />
     <Compile Include="Components\ADSnapshot\AdNotifyType.cs" />

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Bot;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.AD;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Config;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Logger;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.HelpMsg;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Service
 {
@@ -19,21 +17,29 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Service
 		private static IConfig _config;
 		private static IAdReader _ad;
 
-		public static App Instance()
+		private App()
 		{
-			_instance = _instance ?? new App();
-			_services = new List<Decorator>();
-			return _instance;
 		}
 
-		private App() { }
+		public void Init(params IComponent[] decorators)
+		{
+			HelpMessage.MsgList = new List<string>();
+			_decorators = decorators;
+			_logger = _decorators?.OfType<ILogger>().FirstOrDefault();
+			_config = _decorators?.OfType<IConfig>().FirstOrDefault();
+			_ad = _decorators?.OfType<IAdReader>().FirstOrDefault();
+
+			_services[0].Component = new TelegramBot(_logger, _ad, _config);
+
+			_services.LastOrDefault()?.Init(decorators);
+		}
 
 		public void Add<T>(T service) where T : Decorator
 		{
 			if (_services.Count > 0)
 			{
-				var srv = _services.OfType<T>()?.FirstOrDefault();
-				if ( srv != null )
+				var srv = _services.OfType<T>().FirstOrDefault();
+				if (srv != null)
 					_services.Remove(srv);
 			}
 
@@ -43,20 +49,14 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Service
 
 		public Decorator GetService<T>() where T : Decorator
 		{
-			return _services.OfType<T>()?.FirstOrDefault();
+			return _services.OfType<T>().FirstOrDefault();
 		}
 
-		public void Init(params IComponent[] decorators)
+		public static App Instance()
 		{
-			HelpMsg.HelpMessage.MsgList = new List<string>();
-			_decorators = decorators;
-			_logger = _decorators?.OfType<ILogger>().FirstOrDefault();
-			_config = _decorators?.OfType<IConfig>().FirstOrDefault();
-			_ad = _decorators?.OfType<IAdReader>().FirstOrDefault();
-
-			_services[0].Component = new TelegramBot(_logger, _ad, _config);
-
-			_services.LastOrDefault()?.Init(decorators);
+			_instance = _instance ?? new App();
+			_services = new List<Decorator>();
+			return _instance;
 		}
 	}
 }

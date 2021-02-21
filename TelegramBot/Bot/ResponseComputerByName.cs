@@ -8,27 +8,41 @@ using AlexAd.ActiveDirectoryTelegramBot.Bot.Models;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 {
-	class ResponseComputerByName : ResponseBase
+	/// <summary>
+	///		Ответ на запрос информации о компьютере Active Directory по его имени
+	/// </summary>
+	/// <remarks>Наследник класса ResponseBase</remarks>
+	internal class ResponseComputerByName : ResponseBase
 	{
 		private readonly IAdReader _ad;
 
-		public ResponseComputerByName(List<string> message, IAdReader ad) : base()
+		/// <summary>
+		///		Ответ на запрос информации о компьютере Active Directory по его имени
+		/// </summary>
+		/// <remarks>Наследник класса ResponseBase</remarks>
+		/// <param name="message">Запрос в виде списка подстрок</param>
+		/// <param name="ad">Контекст подключения к Active Directory</param>
+		public ResponseComputerByName(List<string> message, IAdReader ad)
 		{
 			MessagesIn = message;
 			_ad = ad;
 		}
 
+		/// <summary>
+		///		Формирование ответа на запрос информации о компьютере Active Directory по его имени
+		/// </summary>
+		/// <returns></returns>
 		public override async Task Init()
 		{
 			await base.Init();
 
-			if ( MessagesIn.Count() < 2 || string.IsNullOrEmpty(MessagesIn[1]) )
+			if (MessagesIn.Count() < 2 || string.IsNullOrEmpty(MessagesIn[1]))
 				return;
 
 			await Task.Run(() =>
 			{
 				var computerPrincipal = _ad.GetComputerObjectByName(MessagesIn[1]);
-				if ( computerPrincipal == null )
+				if (computerPrincipal == null)
 					return;
 
 				var sb = new StringBuilder();

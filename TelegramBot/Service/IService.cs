@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Service
+﻿namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Service
 {
 	public interface IService
 	{

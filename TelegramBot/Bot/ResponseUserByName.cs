@@ -8,27 +8,40 @@ using AlexAd.ActiveDirectoryTelegramBot.Bot.Models;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 {
-	class ResponseUserByName : ResponseBase
+	/// <summary>
+	///		Ответ на запрос информации о пользователе Active Directory по его имени
+	/// </summary>
+	/// <remarks>Наследник класса ResponseBase</remarks>
+	internal class ResponseUserByName : ResponseBase
 	{
 		private readonly IAdReader _ad;
 
-		public ResponseUserByName(List<string> message, IAdReader ad) : base()
+		/// <summary>
+		///		Ответ на запрос информации о пользователе Active Directory по его имени
+		/// </summary>
+		/// <param name="message">Запрос в виде подстрок</param>
+		/// <param name="ad">Контекст подключения к Active Directory</param>
+		public ResponseUserByName(List<string> message, IAdReader ad)
 		{
 			MessagesIn = message;
 			_ad = ad;
 		}
 
+		/// <summary>
+		///		Ответ на запрос информации о пользователе Active Directory по его имени
+		/// </summary>
+		/// <returns></returns>
 		public override async Task Init()
 		{
 			await base.Init();
 
-			if ( MessagesIn.Count() < 2 || string.IsNullOrEmpty(MessagesIn[1]) )
+			if (MessagesIn.Count() < 2 || string.IsNullOrEmpty(MessagesIn[1]))
 				return;
 
 			await Task.Run(() =>
 			{
 				var userPrincipal = _ad.GetUserObjectByName($"{MessagesIn[1]} {MessagesIn[2]} {MessagesIn[3]}");
-				if ( userPrincipal == null )
+				if (userPrincipal == null)
 					return;
 
 				var sb = new StringBuilder();

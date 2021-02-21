@@ -10,10 +10,12 @@ using AlexAd.ActiveDirectoryTelegramBot.Bot.Service;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 {
+	/// <summary>
+	///		Отслеживание изменений в Active Directory
+	/// </summary>
 	public class AdSnapshot : Decorator, IAdSnapshot
 	{
 		public delegate void AdChanged();
-		public static event AdChanged OnAdChanged;
 
 		private static DirectoryEntry _directoryEntry;
 		private static DirectorySearcher _directorySearcher;
@@ -23,17 +25,72 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 		private static bool _enabled;
 		private static bool? _connected;
 
-		private readonly CancellationTokenSource _cancellationTokenSource;
-		private CancellationToken _cancellationToken;
-		
 		private static IConfig _config;
 		private static ILogger _logger;
 		private static IComponent[] _decorators;
+
+		private readonly CancellationTokenSource _cancellationTokenSource;
+		private CancellationToken _cancellationToken;
+
+		public static event AdChanged OnAdChanged;
 
 		private AdSnapshot()
 		{
 			_cancellationTokenSource = new CancellationTokenSource();
 			_cancellationToken = _cancellationTokenSource.Token;
+		}
+
+		/// <summary>
+		///		Включение компонента
+		/// </summary>
+		/// <param name="decorators"></param>
+		public override void Init(params IComponent[] decorators)
+		{
+			base.Init(decorators);
+
+			HelpMessage.MsgList.Add(
+				"/NotificationsOn [/non] -uUSER_AD_ACCOUNT_NAME -pUSER_AD_PASSWORD : Subscribe to notifications on AD changes");
+			HelpMessage.MsgList.Add("/NotificationsOff [/nof] : Unsubscribe to notifications on AD changes");
+
+			_decorators = decorators;
+			_logger = _decorators?.OfType<ILogger>().FirstOrDefault();
+			_config = (Config.Config)_decorators?.OfType<IConfig>().FirstOrDefault();
+			_logger?.Log("Initializing Service: Active Directory Snapshot...", OutputTarget.Console);
+
+			if ( string.IsNullOrEmpty(_config?.ServerAddress) || string.IsNullOrEmpty(_config?.UserName) ||
+			     string.IsNullOrEmpty(_config?.UserPassword) )
+				return;
+
+			Config.Config.OnConfigUpdated += Config_OnConfigUpdated;
+			RunAsync(3000);
+			AdNotifySender.Instance();
+		}
+
+		/// <summary>
+		///		Запуск цикла чтения изменений в Active Directory
+		/// </summary>
+		/// <param name="loopPeriodInMilliseconds"></param>
+		public async void RunAsync(int loopPeriodInMilliseconds)
+		{
+			AdInit();
+			if ((bool) !_connected) return;
+			InitializeSnapshot();
+			_enabled = true;
+
+			await Task.Run(() =>
+			{
+				while (_enabled)
+				{
+					if (_cancellationToken.IsCancellationRequested)
+					{
+						_enabled = false;
+						break;
+					}
+
+					CompareSnapshot();
+					Thread.Sleep(loopPeriodInMilliseconds);
+				}
+			}, _cancellationToken);
 		}
 
 		public static AdSnapshot Instance()
@@ -44,41 +101,52 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 			return _instance;
 		}
 
+		/// <summary>
+		///		Создание подключения к Active Directory и получение первичных куки для последующего определения изменений
+		/// </summary>
 		private static void AdInit()
 		{
-			if ( _connected == null || (bool)!_connected)
-			{
+			if (_connected == null || (bool) !_connected)
 				try
 				{
-					_directoryEntry = _directoryEntry ?? new DirectoryEntry("LDAP://" + _config.ServerAddress, _config.UserName, _config.UserPassword);
+					_directoryEntry = _directoryEntry ?? new DirectoryEntry("LDAP://" + _config.ServerAddress,
+						                  _config.UserName, _config.UserPassword);
 					_directorySearcher = _directorySearcher ?? new DirectorySearcher(_directoryEntry)
 					{
-						Filter = "(|(isDeleted=true)(&(objectClass=user)(objectCategory=person))(&(objectClass=computer)(objectCategory=computer))(&(objectClass=group)(objectCategory=group)))",
+						Filter =
+							"(|(isDeleted=true)(&(objectClass=user)(objectCategory=person))(&(objectClass=computer)(objectCategory=computer))(&(objectClass=group)(objectCategory=group)))",
 						SearchScope = SearchScope.Subtree,
 						ExtendedDN = ExtendedDN.Standard,
 						Tombstone = true
 					};
-					_directorySearcher.PropertiesToLoad.AddRange(new[] { "lastknownparent", "whencreated", "whenchanged" });
+					_directorySearcher.PropertiesToLoad.AddRange(
+						new[] {"lastknownparent", "whencreated", "whenchanged"});
 
-					_directorySearcher.DirectorySynchronization = new DirectorySynchronization(DirectorySynchronizationOptions.ObjectSecurity);
+					_directorySearcher.DirectorySynchronization =
+						new DirectorySynchronization(DirectorySynchronizationOptions.ObjectSecurity);
 
-					foreach ( SearchResult res in _directorySearcher.FindAll() )
-					{ }
+					foreach (SearchResult _ in _directorySearcher.FindAll()) { }
 
 					_connected = true;
-				} catch
+				}
+				catch
 				{
 					_connected = false;
 					_logger.Log("Some error occured on Active Directory connecting", OutputTarget.Console);
 				}
-			}
 		}
 
+		/// <summary>
+		///		Получение куки, изменение которых говорит об изменении в Active Directory
+		/// </summary>
 		private static void InitializeSnapshot()
 		{
 			_cookie = _directorySearcher.DirectorySynchronization.GetDirectorySynchronizationCookie();
 		}
 
+		/// <summary>
+		///		Сравнение предыдущего и текущего состояния Active Directory на основе куки
+		/// </summary>
 		private static void CompareSnapshot()
 		{
 			var dirSync = new DirectorySynchronization(DirectorySynchronizationOptions.ObjectSecurity, _cookie);
@@ -88,14 +156,13 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 				DirectorySynchronization = dirSync
 			};
 
-			foreach ( SearchResult res in _directorySearcher.FindAll() )
+			foreach (SearchResult res in _directorySearcher.FindAll())
 			{
 				var delta = res?.Properties;
-				if (delta == null) continue;
+				if (delta?.PropertyNames == null) continue;
 				var found = false;
-				foreach ( string prop in delta.PropertyNames )
-				{
-					switch ( prop.ToLower() )
+				foreach (string prop in delta.PropertyNames)
+					switch (prop.ToLower())
 					{
 						case "objectguid":
 						case "adspath":
@@ -123,87 +190,88 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 						case "title":
 						case "userworkstations":
 						case "distinguishedname":
-						if ( delta.Contains("isdeleted") && bool.TryParse(delta["isdeleted"][0].ToString(), out bool deleted) && deleted )
-						{
-							ProcessDeleted(prop, delta);
-							found = true;
-						} else
-						{
-							ProcessChanged(res.GetDirectoryEntry(), prop, delta);
-							found = true;
-						}
-						break;
+							if (delta.Contains("isdeleted") &&
+							    bool.TryParse(delta["isdeleted"][0].ToString(), out var deleted) && deleted)
+							{
+								ProcessDeleted(delta["distinguishedname"][0].ToString());
+								found = true;
+							}
+							else
+							{
+								ProcessChanged(res.GetDirectoryEntry(), prop, delta);
+								found = true;
+							}
+
+							break;
 					}
-				}
-				if ( found ) OnAdChanged?.Invoke();
+
+				if (found) OnAdChanged?.Invoke();
 				_directorySearcher.DirectorySynchronization.ResetDirectorySynchronizationCookie(_cookie);
 				InitializeSnapshot();
 			}
 		}
 
-		// TODO v2 Заготовка для будущего использования
-		private static void ProcessDeleted(string prop, ResultPropertyCollection delta)
+		/// <summary>
+		///		Отправка сообщения об удалении объекта
+		/// </summary>
+		/// <param name="distinguishedName"></param>
+		private static void ProcessDeleted(string distinguishedName)
 		{
-			
+			_adNotifyCollection.Push(CreateNotifyMessage("deleted", distinguishedName));
 		}
 
+		/// <summary>
+		///		Отправка сообщения об изменении объекта
+		/// </summary>
+		/// <param name="directoryEntry"></param>
+		/// <param name="prop">Строковое значения имени изменившегося поля</param>
+		/// <param name="delta">Список полей изменившегося объекта</param>
 		private static void ProcessChanged(DirectoryEntry directoryEntry, string prop, ResultPropertyCollection delta)
 		{
 			var schemeClass = directoryEntry.SchemaClassName ?? string.Empty;
-			
+
 			if (!schemeClass.Equals("computer", StringComparison.OrdinalIgnoreCase)
 			    && !schemeClass.Equals("user", StringComparison.OrdinalIgnoreCase)
 			    && !schemeClass.Equals("group", StringComparison.OrdinalIgnoreCase))
 				return;
 
-			foreach ( object val in delta[prop] )
+			foreach (var val in delta[prop])
 			{
-				var name = directoryEntry?.Name?.Substring(3) ?? string.Empty;
-				var parent = directoryEntry?.Parent.Name ?? string.Empty;
-				if ( name.Equals(val.ToString(), StringComparison.OrdinalIgnoreCase) )
+				var name = directoryEntry.Name?.Substring(3) ?? string.Empty;
+				var parent = directoryEntry.Parent.Name ?? string.Empty;
+				if (name.Equals(val.ToString(), StringComparison.OrdinalIgnoreCase))
 					continue;
 				_adNotifyCollection.Push(CreateNotifyMessage(schemeClass, name, prop, val, parent));
 			}
 		}
 
-		private static AdNotifyMessage CreateNotifyMessage(string schemeClass, string name, string property, object value, string parent)
+		/// <summary>
+		///		Создание события-оповещения об изменениях
+		/// </summary>
+		/// <param name="schemeClass"></param>
+		/// <param name="name"></param>
+		/// <param name="property"></param>
+		/// <param name="value"></param>
+		/// <param name="parent"></param>
+		/// <returns></returns>
+		private static AdNotifyMessage CreateNotifyMessage(string schemeClass, string name, string property = null, object value = null, string parent = null)
 		{
 			string val;
-			if ( value is string )
+			if (value is string)
 				val = value.ToString();
-			else if ( value is byte[] )
+			else if (value is byte[])
 				val = parent;
 			else
-				val = value.ToString();
+				val = value?.ToString() ?? string.Empty;
 
 			// TODO v2 Заготовка для будущего использования
-			if ( schemeClass.Equals("user", StringComparison.OrdinalIgnoreCase) )
+			if (schemeClass.Equals("user", StringComparison.OrdinalIgnoreCase))
 				return new AdNotifyMessageUserModified(schemeClass, name, property, val);
-			if ( schemeClass.Equals("computer", StringComparison.OrdinalIgnoreCase) )
+			if (schemeClass.Equals("computer", StringComparison.OrdinalIgnoreCase))
 				return new AdNotifyMessageComputerModified(schemeClass, name, property, val);
-			return new AdNotifyMessageGroupModified(schemeClass, name, property, val);
-		}
-
-		public async void RunAsync(int loopPeriodInMilliseconds)
-		{
-			AdInit();
-			if ((bool)!_connected) return;
-			InitializeSnapshot();
-			_enabled = true;
-
-			await Task.Run(() =>
-			{
-				while ( _enabled )
-				{
-					if ( _cancellationToken.IsCancellationRequested )
-					{
-						_enabled = false;
-						break;
-					}
-					CompareSnapshot();
-					Thread.Sleep(loopPeriodInMilliseconds);
-				}
-			}, _cancellationToken);
+			if ( schemeClass.Equals("group", StringComparison.OrdinalIgnoreCase) )
+				return new AdNotifyMessageGroupModified(schemeClass, name, property, val);
+			return new AdNotifyMessageObjectDeleted(schemeClass, name);
 		}
 
 		private void Stop()
@@ -212,32 +280,16 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 			_connected = null;
 		}
 
-		public override void Init(params IComponent[] decorators)
-		{
-			base.Init(decorators);
-
-			HelpMessage.MsgList.Add("/NotificationsOn [/non] -uUSER_AD_ACCOUNT_NAME -pUSER_AD_PASSWORD : Subscribe to notifications on AD changes");
-			HelpMessage.MsgList.Add("/NotificationsOff [/nof] : Unsubscribe to notifications on AD changes");
-
-			_decorators = decorators;
-			_logger = _decorators?.OfType<ILogger>().FirstOrDefault();
-			_config = (Config.Config)_decorators?.OfType<IConfig>().FirstOrDefault();
-			_logger?.Log("Initializing Service: Active Directory Snapshot...", OutputTarget.Console);
-
-			if (string.IsNullOrEmpty(_config?.ServerAddress) || string.IsNullOrEmpty(_config?.UserName) ||
-			    string.IsNullOrEmpty(_config?.UserPassword)) return;
-
-			Config.Config.OnConfigUpdated += Config_OnConfigUpdated;
-			RunAsync(3000);
-			AdNotifySender.Instance();
-		}
-
+		/// <summary>
+		///		Перезапуск слушателя изменений при обновлении конфигурации приложения
+		/// </summary>
+		/// <param name="config"></param>
 		private void Config_OnConfigUpdated(IConfig config)
 		{
 			_config = config;
 
-			if ( string.IsNullOrEmpty(_config?.ServerAddress) || string.IsNullOrEmpty(_config?.UserName) ||
-			     string.IsNullOrEmpty(_config?.UserPassword) ) return;
+			if (string.IsNullOrEmpty(_config?.ServerAddress) || string.IsNullOrEmpty(_config?.UserName) ||
+			    string.IsNullOrEmpty(_config?.UserPassword)) return;
 
 			Stop();
 			Thread.Sleep(1000);

@@ -1,12 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
-using System.Linq;
 using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot
 {
@@ -22,9 +15,9 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot
 		internal void TestStartupAndStop(string[] args)
 		{
 			//debug method only
-			this.OnStart(args);
+			OnStart(args);
 			Console.ReadLine();
-			this.OnStop();
+			OnStop();
 		}
 
 		protected override void OnStart(string[] args)

@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Models
 {
+	/// <summary>
+	///		Битовые значения для определения, на получение каких именно оповещений подпиан пользователь
+	/// </summary>
+	// TODO v2 Заготовка для будущего использования
 	[Flags]
 	public enum AdNotifications
 	{

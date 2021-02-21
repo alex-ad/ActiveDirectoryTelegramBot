@@ -2,8 +2,43 @@
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 {
+	/// <summary>
+	///		Значения битовых масок и значений, формируемых при получении данных из Active Directory
+	/// </summary>
 	internal static class AdType
 	{
+		/// <summary>
+		///		Расшифровка значения родительской группы
+		/// </summary>
+		public enum PrimaryGroupId
+		{
+			DomainUsers = 513,
+			DomainComputers = 515,
+			DomainControllers = 516
+		}
+
+		/// <summary>
+		///		Расшифровка значения типа аккаунта
+		/// </summary>
+		[Flags]
+		public enum SamAccountType
+		{
+			DomainObject = 0x0,
+			GroupObject = 0x10000000,
+			NonSecurityGroupObject = 0x10000001,
+			AliasObject = 0x20000000,
+			NonSecurityAliasObject = 0x20000001,
+			UserObject = 0x30000000,
+			MachineAccount = 0x30000001,
+			TrustAccount = 0x30000002,
+			AppBasicAccount = 0x40000000,
+			AppQueryGroup = 0x40000001,
+			AccountTypeMax = 0x7fffffff
+		}
+
+		/// <summary>
+		///		Расшифровка значения характеристик аккаунта
+		/// </summary>
 		[Flags]
 		public enum UserAccountControl
 		{
@@ -29,29 +64,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 			PasswordExpired = 8388608,
 			TrustedToAuthForDelegation = 16777216,
 			PartialSecretsAccount = 67108864
-		}
-
-		[Flags]
-		public enum SamAccountType
-		{
-			DomainObject = 0x0,
-			GroupObject = 0x10000000,
-			NonSecurityGroupObject = 0x10000001,
-			AliasObject = 0x20000000,
-			NonSecurityAliasObject = 0x20000001,
-			UserObject = 0x30000000,
-			MachineAccount = 0x30000001,
-			TrustAccount = 0x30000002,
-			AppBasicAccount = 0x40000000,
-			AppQueryGroup = 0x40000001,
-			AccountTypeMax = 0x7fffffff
-		}
-
-		public enum PrimaryGroupId
-		{
-			DomainUsers = 513,
-			DomainComputers = 515,
-			DomainControllers = 516
 		}
 	}
 }

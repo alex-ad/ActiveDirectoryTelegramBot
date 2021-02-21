@@ -6,7 +6,8 @@
 		{
 			Computer,
 			User,
-			Group
+			Group,
+			Any
 		}
 
 		// TODO v2 Заготовка для будущего использования
@@ -14,7 +15,7 @@
 		{
 			Added,
 			Deleted,
-			Modified,
+			Modified
 		}
 	}
 }
