@@ -198,6 +198,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 						case "title":
 						case "userworkstations":
 						case "parentguid":
+						case "isdeleted":
 							if (delta.Contains("isdeleted") &&
 							    bool.TryParse(delta["isdeleted"][0].ToString(), out var deleted) && deleted)
 							{
