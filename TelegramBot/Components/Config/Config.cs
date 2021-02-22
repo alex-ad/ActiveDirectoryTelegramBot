@@ -113,22 +113,16 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Config
 
 			var userNode = xFile.CreateElement("User");
 			var userId = xFile.CreateElement("TelegramId");
-			var userName = xFile.CreateElement("ADUserName");
 			var userAllowed = xFile.CreateElement("Allowed");
-			var userNotifications = xFile.CreateElement("Notifications");
 
 			var userIdValue = xFile.CreateTextNode(user.TelegramId.ToString());
-			var userNameValue = xFile.CreateTextNode(user.ADUserName);
 			var userAllowedValue = xFile.CreateTextNode(user.Allowed.ToString());
 
 			userId.AppendChild(userIdValue);
-			userName.AppendChild(userNameValue);
 			userAllowed.AppendChild(userAllowedValue);
 
 			userNode.AppendChild(userId);
-			userNode.AppendChild(userName);
 			userNode.AppendChild(userAllowed);
-			userNode.AppendChild(userNotifications);
 
 			xRoot?.AppendChild(userNode);
 
@@ -232,60 +226,13 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Config
 			foreach (XmlNode u in users)
 				TelegramUsers.Add(new TelegramUser
 				{
-					ADUserName = u.SelectSingleNode("ADUserName")?.InnerText.Trim(),
 					Allowed = bool.TryParse(u.SelectSingleNode("Allowed")?.InnerText.Trim(), out var allowed)
 						? allowed
 						: false,
 					TelegramId = int.TryParse(u.SelectSingleNode("TelegramId")?.InnerText.Trim(), out var id)
 						? id
-						: default,
-					Notifications = ParseAdNotifications(u)
+						: default
 				});
-		}
-
-		// TODO v2 Заготовка для будущего использования
-		/// <summary>
-		///		Расшифровка битовой маски, представляющей собой значение того, на какие именно оповещения подписан пользователь
-		/// </summary>
-		/// <param name="node"></param>
-		/// <returns></returns>
-		private AdNotifications ParseAdNotifications(XmlNode node)
-		{
-			return (bool.TryParse(node.SelectSingleNode("//Notifications/UserInfoChanged")?.InnerText.Trim(),
-				       out var uic)
-				       ? uic ? AdNotifications.UserInfoChanged : 0
-				       : 0) &
-			       (bool.TryParse(node.SelectSingleNode("//Notifications/UserAdded")?.InnerText.Trim(), out var ua)
-				       ? ua ? AdNotifications.UserAdded : 0
-				       : 0) &
-			       (bool.TryParse(node.SelectSingleNode("//Notifications/UserBlockedUnblocked")?.InnerText.Trim(),
-				       out var ubu)
-				       ? ubu ? AdNotifications.UserBlockedUnblocked : 0
-				       : 0) &
-			       (bool.TryParse(node.SelectSingleNode("//Notifications/UserDeleted")?.InnerText.Trim(), out var ud)
-				       ? ud ? AdNotifications.UserDeleted : 0
-				       : 0) &
-			       (bool.TryParse(node.SelectSingleNode("//Notifications/UserMoved")?.InnerText.Trim(), out var um)
-				       ? um ? AdNotifications.UserMoved : 0
-				       : 0) &
-			       (bool.TryParse(node.SelectSingleNode("//Notifications/ComputerInfoChanged")?.InnerText.Trim(),
-				       out var cc)
-				       ? cc ? AdNotifications.ComputerInfoChanged : 0
-				       : 0) &
-			       (bool.TryParse(node.SelectSingleNode("//Notifications/ComputerAdded")?.InnerText.Trim(), out var ca)
-				       ? ca ? AdNotifications.ComputerAdded : 0
-				       : 0) &
-			       (bool.TryParse(node.SelectSingleNode("//Notifications/ComputerBlockedUnblocked")?.InnerText.Trim(),
-				       out var cnu)
-				       ? cnu ? AdNotifications.ComputerBlockedUnblocked : 0
-				       : 0) &
-			       (bool.TryParse(node.SelectSingleNode("//Notifications/ComputerDeleted")?.InnerText.Trim(),
-				       out var cd)
-				       ? cd ? AdNotifications.ComputerDeleted : 0
-				       : 0) &
-			       (bool.TryParse(node.SelectSingleNode("//Notifications/ComputerMoved")?.InnerText.Trim(), out var cm)
-				       ? cm ? AdNotifications.ComputerMoved : 0
-				       : 0);
 		}
 	}
 }

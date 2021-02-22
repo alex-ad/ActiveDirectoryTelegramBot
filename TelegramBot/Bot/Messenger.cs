@@ -19,7 +19,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 		private readonly IComponent[] _decorators;
 		private readonly User _telegramUser;
 
-
 		/// <summary>
 		///		Создание ответа в зависимости от запроса
 		/// </summary>

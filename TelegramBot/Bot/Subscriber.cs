@@ -49,10 +49,8 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 
 			var user = new TelegramUser
 			{
-				ADUserName = userName,
 				Allowed = true,
 				TelegramId = _telegramUserId,
-				Notifications = AdNotifications.None
 			};
 
 			try
@@ -98,19 +96,12 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 		///		Проверка (в файле Config.config), подписан ли пользователь на получение оповещений
 		/// </summary>
 		/// <returns></returns>
-		public bool IsIdentifiedUser()
-		{
-			return _config.TelegramUsers.Exists(x => x.TelegramId == _telegramUserId);
-		}
+		public bool IsIdentifiedUser() => _config.TelegramUsers.Exists(x => x.TelegramId == _telegramUserId);
 
-		// TODO v2 Заготовка для будущего использования
 		/// <summary>
 		///		Проверка (в файле Config.config), разрешено ли пользователю получать оповещения
 		/// </summary>
 		/// <returns></returns>
-		public bool IsAllowedUser()
-		{
-			return _config.TelegramUsers.Exists(x => x.TelegramId == _telegramUserId && x.Allowed);
-		}
+		public bool IsAllowedUser() => _config.TelegramUsers.Exists(x => x.TelegramId == _telegramUserId && x.Allowed);
 	}
 }

@@ -11,7 +11,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Logger
 		Console = 2
 	}
 
-	// TODO v2 Назначение и вкл-выкл вывода логов брать из конфига
 	/// <summary>
 	///		Вывод логов в консоль или(и) файл
 	/// </summary>

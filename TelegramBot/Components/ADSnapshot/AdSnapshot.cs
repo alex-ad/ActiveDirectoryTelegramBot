@@ -268,14 +268,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 			else
 				val = value?.ToString() ?? string.Empty;
 
-			// TODO v2 Заготовка для будущего использования
-			if (schemeClass.Equals("user", StringComparison.OrdinalIgnoreCase))
-				return new AdNotifyMessageUserModified(schemeClass, name, property, val);
-			if (schemeClass.Equals("computer", StringComparison.OrdinalIgnoreCase))
-				return new AdNotifyMessageComputerModified(schemeClass, name, property, val);
-			if ( schemeClass.Equals("group", StringComparison.OrdinalIgnoreCase) )
-				return new AdNotifyMessageGroupModified(schemeClass, name, property, val);
-			return new AdNotifyMessageObjectDeleted(schemeClass, name);
+			return new AdNotifyMessage(schemeClass, name, property, val);
 		}
 
 		private void Stop()
