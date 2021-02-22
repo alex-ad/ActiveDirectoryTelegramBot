@@ -11,7 +11,7 @@ using AlexAd.ActiveDirectoryTelegramBot.Bot.Service;
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 {
 	/// <summary>
-	///		Отслеживание изменений в Active Directory
+	///     Отслеживание изменений в Active Directory
 	/// </summary>
 	public class AdSnapshot : Decorator, IAdSnapshot
 	{
@@ -32,8 +32,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 		private readonly CancellationTokenSource _cancellationTokenSource;
 		private CancellationToken _cancellationToken;
 
-		public static event AdChanged OnAdChanged;
-
 		private AdSnapshot()
 		{
 			_cancellationTokenSource = new CancellationTokenSource();
@@ -41,39 +39,14 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 		}
 
 		/// <summary>
-		///		Включение компонента
-		/// </summary>
-		/// <param name="decorators"></param>
-		public override void Init(params IComponent[] decorators)
-		{
-			base.Init(decorators);
-
-			HelpMessage.MsgList.Add(
-				"/NotificationsOn [/non] -uUSER_AD_ACCOUNT_NAME -pUSER_AD_PASSWORD : Subscribe to notifications on AD changes");
-			HelpMessage.MsgList.Add("/NotificationsOff [/nof] : Unsubscribe to notifications on AD changes");
-
-			_decorators = decorators;
-			_logger = _decorators?.OfType<ILogger>().FirstOrDefault();
-			_config = (Config.Config)_decorators?.OfType<IConfig>().FirstOrDefault();
-			_logger?.Log("Initializing Service: Active Directory Snapshot...", OutputTarget.Console);
-
-			if ( string.IsNullOrEmpty(_config?.ServerAddress) || string.IsNullOrEmpty(_config?.UserName) ||
-			     string.IsNullOrEmpty(_config?.UserPassword) )
-				return;
-
-			Config.Config.OnConfigUpdated += Config_OnConfigUpdated;
-			RunAsync(3000);
-			AdNotifySender.Instance();
-		}
-
-		/// <summary>
-		///		Запуск цикла чтения изменений в Active Directory
+		///     Запуск цикла чтения изменений в Active Directory
 		/// </summary>
 		/// <param name="loopPeriodInMilliseconds"></param>
 		public async void RunAsync(int loopPeriodInMilliseconds)
 		{
 			AdInit();
-			if ((bool) !_connected) return;
+			if ((bool) !_connected)
+				return;
 			InitializeSnapshot();
 			_enabled = true;
 
@@ -93,6 +66,34 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 			}, _cancellationToken);
 		}
 
+		public static event AdChanged OnAdChanged;
+
+		/// <summary>
+		///     Включение компонента
+		/// </summary>
+		/// <param name="decorators"></param>
+		public override void Init(params IComponent[] decorators)
+		{
+			base.Init(decorators);
+
+			HelpMessage.MsgList.Add(
+				"/NotificationsOn [/non] -uUSER_AD_ACCOUNT_NAME -pUSER_AD_PASSWORD : Subscribe to notifications on AD changes");
+			HelpMessage.MsgList.Add("/NotificationsOff [/nof] : Unsubscribe to notifications on AD changes");
+
+			_decorators = decorators;
+			_logger = _decorators?.OfType<ILogger>().FirstOrDefault();
+			_config = (Config.Config) _decorators?.OfType<IConfig>().FirstOrDefault();
+			_logger?.Log("Initializing Service: Active Directory Snapshot...", OutputTarget.Console);
+
+			if (string.IsNullOrEmpty(_config?.ServerAddress) || string.IsNullOrEmpty(_config?.UserName) ||
+			    string.IsNullOrEmpty(_config?.UserPassword))
+				return;
+
+			Config.Config.OnConfigUpdated += Config_OnConfigUpdated;
+			RunAsync(3000);
+			AdNotifySender.Instance();
+		}
+
 		public static AdSnapshot Instance()
 		{
 			_instance = _instance ?? new AdSnapshot();
@@ -102,7 +103,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 		}
 
 		/// <summary>
-		///		Создание подключения к Active Directory и получение первичных куки для последующего определения изменений
+		///     Создание подключения к Active Directory и получение первичных куки для последующего определения изменений
 		/// </summary>
 		private static void AdInit()
 		{
@@ -123,19 +124,22 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 					_directorySearcher.DirectorySynchronization =
 						new DirectorySynchronization(DirectorySynchronizationOptions.ObjectSecurity);
 
-					foreach (SearchResult _ in _directorySearcher.FindAll()) { }
+					foreach (SearchResult _ in _directorySearcher.FindAll())
+					{
+					}
 
 					_connected = true;
 				}
 				catch
 				{
 					_connected = false;
-					_logger.Log("Some error occured on Active Directory connecting", OutputTarget.Console | OutputTarget.File);
+					_logger.Log("Some error occured on Active Directory connecting",
+						OutputTarget.Console | OutputTarget.File);
 				}
 		}
 
 		/// <summary>
-		///		Получение куки, изменение которых говорит об изменении в Active Directory
+		///     Получение куки, изменение которых говорит об изменении в Active Directory
 		/// </summary>
 		private static void InitializeSnapshot()
 		{
@@ -143,7 +147,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 		}
 
 		/// <summary>
-		///		Сравнение предыдущего и текущего состояния Active Directory на основе куки
+		///     Сравнение предыдущего и текущего состояния Active Directory на основе куки
 		/// </summary>
 		private static void CompareSnapshot()
 		{
@@ -157,7 +161,8 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 			foreach (SearchResult res in _directorySearcher.FindAll())
 			{
 				var delta = res?.Properties;
-				if (delta?.PropertyNames == null) continue;
+				if (delta?.PropertyNames == null)
+					continue;
 				var found = false;
 				foreach (string prop in delta.PropertyNames)
 					switch (prop.ToLower())
@@ -169,6 +174,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 						case "lastlogontimestamp":
 						case "lastlogon":
 						case "pwdlastset":
+						case "distinguishedname":
 							break;
 						case "cn":
 						case "name":
@@ -191,11 +197,18 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 						case "telephonenumber":
 						case "title":
 						case "userworkstations":
-						case "distinguishedname":
+						case "parentguid":
+							//case "distinguishedname":
 							if (delta.Contains("isdeleted") &&
 							    bool.TryParse(delta["isdeleted"][0].ToString(), out var deleted) && deleted)
 							{
 								ProcessDeleted(delta["distinguishedname"][0].ToString());
+								found = true;
+							}
+							else if (delta.Contains("parentguid") &&
+							         bool.TryParse(delta["parentguid"][0].ToString(), out var moved) && moved)
+							{
+								ProcessMoved(delta["distinguishedname"][0].ToString());
 								found = true;
 							}
 							else
@@ -207,14 +220,24 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 							break;
 					}
 
-				if (found) OnAdChanged?.Invoke();
+				if (found)
+					OnAdChanged?.Invoke();
 				_directorySearcher.DirectorySynchronization.ResetDirectorySynchronizationCookie(_cookie);
 				InitializeSnapshot();
 			}
 		}
 
 		/// <summary>
-		///		Отправка сообщения об удалении объекта
+		///     Отправка сообщения о перемещении объекта
+		/// </summary>
+		/// <param name="distinguishedName"></param>
+		private static void ProcessMoved(string distinguishedName)
+		{
+			_adNotifyCollection.Push(CreateNotifyMessage("moved", distinguishedName));
+		}
+
+		/// <summary>
+		///     Отправка сообщения об удалении объекта
 		/// </summary>
 		/// <param name="distinguishedName"></param>
 		private static void ProcessDeleted(string distinguishedName)
@@ -223,7 +246,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 		}
 
 		/// <summary>
-		///		Отправка сообщения об изменении объекта
+		///     Отправка сообщения об изменении объекта
 		/// </summary>
 		/// <param name="directoryEntry"></param>
 		/// <param name="prop">Строковое значения имени изменившегося поля</param>
@@ -248,7 +271,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 		}
 
 		/// <summary>
-		///		Создание события-оповещения об изменениях
+		///     Создание события-оповещения об изменениях
 		/// </summary>
 		/// <param name="schemeClass"></param>
 		/// <param name="name"></param>
@@ -256,7 +279,8 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 		/// <param name="value"></param>
 		/// <param name="parent"></param>
 		/// <returns></returns>
-		private static AdNotifyMessage CreateNotifyMessage(string schemeClass, string name, string property = null, object value = null, string parent = null)
+		private static AdNotifyMessage CreateNotifyMessage(string schemeClass, string name, string property = null,
+			object value = null, string parent = null)
 		{
 			string val;
 			if (value is string)
@@ -276,7 +300,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 		}
 
 		/// <summary>
-		///		Перезапуск слушателя изменений при обновлении конфигурации приложения
+		///     Перезапуск слушателя изменений при обновлении конфигурации приложения
 		/// </summary>
 		/// <param name="config"></param>
 		private void Config_OnConfigUpdated(IConfig config)
@@ -284,7 +308,8 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 			_config = config;
 
 			if (string.IsNullOrEmpty(_config?.ServerAddress) || string.IsNullOrEmpty(_config?.UserName) ||
-			    string.IsNullOrEmpty(_config?.UserPassword)) return;
+			    string.IsNullOrEmpty(_config?.UserPassword))
+				return;
 
 			Stop();
 			Thread.Sleep(1000);
