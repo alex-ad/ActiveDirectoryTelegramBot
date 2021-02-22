@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace AlexAd.ActiveDirectoryTelegramBot.Bot.HelpMsg
+namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Modules
 {
 	/// <summary>
 	///		Список команд, выводимых при запросе помощи через чат

@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Config;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Logger;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.HelpMsg;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Modules;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Service;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
@@ -132,7 +132,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 				catch
 				{
 					_connected = false;
-					_logger.Log("Some error occured on Active Directory connecting", OutputTarget.Console);
+					_logger.Log("Some error occured on Active Directory connecting", OutputTarget.Console | OutputTarget.File);
 				}
 		}
 

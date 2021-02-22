@@ -8,6 +8,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.AD
 		void Connect();
 		UserPrincipal GetUserObjectByLogin(string accountName);
 		string GetUserProperty(UserPrincipal userPrincipal, string propertyName);
+		string GetComputerProperty(ComputerPrincipal computerPrincipal, string propertyName);
 		IEnumerable<string> GetGroupsByUserObject(UserPrincipal userPrincipal);
 		UserPrincipal GetUserObjectByName(string fullName);
 		ComputerPrincipal GetComputerObjectByName(string computerName);

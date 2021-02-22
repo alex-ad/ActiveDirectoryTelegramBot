@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.HelpMsg;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Modules;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 {

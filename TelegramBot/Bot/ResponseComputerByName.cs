@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.AD;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Models;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Modules;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 {
@@ -39,7 +40,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 			if (MessagesIn.Count() < 2 || string.IsNullOrEmpty(MessagesIn[1]))
 				return;
 
-			await Task.Run(() =>
+			await Task.Run(async () =>
 			{
 				var computerPrincipal = _ad.GetComputerObjectByName(MessagesIn[1]);
 				if (computerPrincipal == null)
@@ -52,6 +53,8 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 					Enabled = computerPrincipal.Enabled.Value,
 					Name = computerPrincipal.DistinguishedName,
 					Description = computerPrincipal.Description,
+					OS = _ad.GetComputerProperty(computerPrincipal, "operatingSystem"),
+					IP = await ComputerPinger.Ping(computerPrincipal.Name),
 					LastLogon = computerPrincipal.LastLogon ?? DateTime.MinValue
 				};
 

@@ -4,7 +4,7 @@ using AlexAd.ActiveDirectoryTelegramBot.Bot.Bot;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.AD;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Config;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Logger;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.HelpMsg;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Modules;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Service
 {

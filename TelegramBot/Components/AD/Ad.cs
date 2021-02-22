@@ -3,7 +3,7 @@ using System.DirectoryServices.AccountManagement;
 using System.Linq;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Config;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Logger;
-using AlexAd.ActiveDirectoryTelegramBot.Bot.HelpMsg;
+using AlexAd.ActiveDirectoryTelegramBot.Bot.Modules;
 using AlexAd.ActiveDirectoryTelegramBot.Bot.Service;
 
 namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.AD
@@ -22,9 +22,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.AD
 		private static Ad _instance;
 		private static IConfig _config;
 
-		private Ad()
-		{
-		}
+		private Ad() { }
 
 		public void Connect()
 		{
@@ -34,45 +32,29 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.AD
 					_ad = new AdReader(_adContext);
 		}
 
-		public UserPrincipal GetUserObjectByLogin(string accountName)
-		{
-			return _ad.GetUserObjectByLogin(accountName);
-		}
+		public UserPrincipal GetUserObjectByLogin(string accountName) => _ad.GetUserObjectByLogin(accountName);
 
-		public string GetUserProperty(UserPrincipal userPrincipal, string propertyName)
-		{
-			return _ad.GetUserProperty(userPrincipal, propertyName);
-		}
+		public string GetUserProperty(UserPrincipal userPrincipal, string propertyName) =>
+			_ad.GetUserProperty(userPrincipal, propertyName);
 
-		public IEnumerable<string> GetUserNamesByGroupObject(GroupPrincipal groupPrincipal)
-		{
-			return _ad.GetUserNamesByGroupObject(groupPrincipal);
-		}
+		public IEnumerable<string> GetUserNamesByGroupObject(GroupPrincipal groupPrincipal) =>
+			_ad.GetUserNamesByGroupObject(groupPrincipal);
 
-		public UserPrincipal GetUserObjectByName(string fullName)
-		{
-			return _ad.GetUserObjectByName(fullName);
-		}
+		public UserPrincipal GetUserObjectByName(string fullName) => _ad.GetUserObjectByName(fullName);
 
-		public bool IsIdentifiedUser(string userName, string userPassword, List<string> groups)
-		{
-			return _ad.IsIdentifiedUser(userName, userPassword, groups);
-		}
+		public bool IsIdentifiedUser(string userName, string userPassword, List<string> groups) =>
+			_ad.IsIdentifiedUser(userName, userPassword, groups);
+		
+		public string GetComputerProperty(ComputerPrincipal computerPrincipal, string propertyName) =>
+			_ad.GetComputerProperty(computerPrincipal, propertyName);
 
-		public ComputerPrincipal GetComputerObjectByName(string computerName)
-		{
-			return _ad.GetComputerObjectByName(computerName);
-		}
+		public ComputerPrincipal GetComputerObjectByName(string computerName) =>
+			_ad.GetComputerObjectByName(computerName);
 
-		public GroupPrincipal GetGroupObjectByName(string groupName)
-		{
-			return _ad.GetGroupObjectByName(groupName);
-		}
+		public GroupPrincipal GetGroupObjectByName(string groupName) => _ad.GetGroupObjectByName(groupName);
 
-		public IEnumerable<string> GetGroupsByUserObject(UserPrincipal userPrincipal)
-		{
-			return _ad.GetGroupsByUserObject(userPrincipal);
-		}
+		public IEnumerable<string> GetGroupsByUserObject(UserPrincipal userPrincipal) =>
+			_ad.GetGroupsByUserObject(userPrincipal);
 
 		public static Ad Instance()
 		{

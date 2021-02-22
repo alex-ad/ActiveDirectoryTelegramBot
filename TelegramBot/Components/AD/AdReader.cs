@@ -23,33 +23,29 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.AD
 
 		public string GetUserProperty(UserPrincipal userPrincipal, string propertyName)
 		{
-			var de = userPrincipal.GetUnderlyingObject() as DirectoryEntry;
-			if (de == null)
-				return string.Empty;
+			if (!(userPrincipal.GetUnderlyingObject() is DirectoryEntry de)) return string.Empty;
 			return de.Properties.Contains(propertyName) ? de.Properties[propertyName].Value.ToString() : string.Empty;
 		}
 
-		public IEnumerable<string> GetGroupsByUserObject(UserPrincipal userPrincipal)
+		public string GetComputerProperty(ComputerPrincipal computerPrincipal, string propertyName)
 		{
-			return userPrincipal.GetGroups(_adContext).Select(x => x.Name);
+			if (!(computerPrincipal.GetUnderlyingObject() is DirectoryEntry de)) return string.Empty;
+			return de.Properties.Contains(propertyName) ? de.Properties[propertyName].Value.ToString() : string.Empty;
 		}
 
-		public IEnumerable<string> GetUserNamesByGroupObject(GroupPrincipal groupPrincipal)
-		{
-			return groupPrincipal.GetMembers(true).Select(x => x.Name);
-		}
+		public IEnumerable<string> GetGroupsByUserObject(UserPrincipal userPrincipal) =>
+			userPrincipal.GetGroups(_adContext).Select(x => x.Name);
 
-		public UserPrincipal GetUserObjectByLogin(string accountName)
-		{
-			return UserPrincipal.FindByIdentity(_adContext, IdentityType.SamAccountName, accountName) ??
-			       throw new NoMatchingPrincipalException("Sorry, no such user account found for the domain");
-		}
+		public IEnumerable<string> GetUserNamesByGroupObject(GroupPrincipal groupPrincipal) =>
+			groupPrincipal.GetMembers(true).Select(x => x.Name);
 
-		public UserPrincipal GetUserObjectByName(string fullName)
-		{
-			return UserPrincipal.FindByIdentity(_adContext, IdentityType.Name, fullName) ??
-			       throw new NoMatchingPrincipalException("Sorry, no such user account found for the domain");
-		}
+		public UserPrincipal GetUserObjectByLogin(string accountName) =>
+			UserPrincipal.FindByIdentity(_adContext, IdentityType.SamAccountName, accountName) ??
+			throw new NoMatchingPrincipalException("Sorry, no such user account found for the domain");
+
+		public UserPrincipal GetUserObjectByName(string fullName) =>
+			UserPrincipal.FindByIdentity(_adContext, IdentityType.Name, fullName) ??
+			throw new NoMatchingPrincipalException("Sorry, no such user account found for the domain");
 
 		public bool IsIdentifiedUser(string userName, string userPassword, List<string> groups)
 		{
@@ -66,17 +62,13 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.AD
 			return IsUserMultiGroupMember(user, groups);
 		}
 
-		public ComputerPrincipal GetComputerObjectByName(string computerName)
-		{
-			return ComputerPrincipal.FindByIdentity(_adContext, IdentityType.Name, computerName) ??
-			       throw new NoMatchingPrincipalException("Sorry, no such computer account found for the domain");
-		}
+		public ComputerPrincipal GetComputerObjectByName(string computerName) =>
+			ComputerPrincipal.FindByIdentity(_adContext, IdentityType.Name, computerName) ??
+			throw new NoMatchingPrincipalException("Sorry, no such computer account found for the domain");
 
-		public GroupPrincipal GetGroupObjectByName(string groupName)
-		{
-			return GroupPrincipal.FindByIdentity(_adContext, IdentityType.Name, groupName) ??
-			       throw new NoMatchingPrincipalException("Sorry, no such group name found for the domain");
-		}
+		public GroupPrincipal GetGroupObjectByName(string groupName) =>
+			GroupPrincipal.FindByIdentity(_adContext, IdentityType.Name, groupName) ??
+			throw new NoMatchingPrincipalException("Sorry, no such group name found for the domain");
 
 		private bool IsUserMultiGroupMember(UserPrincipal userPrincipal, List<string> groupsList)
 		{

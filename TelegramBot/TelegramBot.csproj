@@ -101,7 +101,8 @@
     <Compile Include="Bot\TelegramBot.cs" />
     <Compile Include="Components\Config\Config.cs" />
     <Compile Include="Components\Config\IConfig.cs" />
-    <Compile Include="HelpMsg\HelpMessage.cs" />
+    <Compile Include="Modules\ComputerPinger.cs" />
+    <Compile Include="Modules\HelpMessage.cs" />
     <Compile Include="Components\Logger\ILogger.cs" />
     <Compile Include="Components\Logger\Logger.cs" />
     <Compile Include="Models\ComputerInfo.cs" />

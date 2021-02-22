@@ -37,7 +37,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 			_logger = logger;
 			_config = config;
 
-			_logger.Log("Starting Bot...", OutputTarget.Console | OutputTarget.File);
+			_logger.Log("Starting Bot...", OutputTarget.Console);
 		}
 
 		public void Init(params IComponent[] decorators)
@@ -49,7 +49,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 
 		public void Dispose()
 		{
-			_logger.Log("OMG! The killed Bot. You Bastards!", OutputTarget.Console | OutputTarget.File);
+			_logger.Log("OMG! The killed Bot. You Bastards!", OutputTarget.Console);
 			_bot.StopReceiving();
 		}
 

@@ -49,7 +49,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Config
 			if (!File.Exists("Config.config"))
 			{
 				_logger?.Log("Config not found. Ensure, it is exists in the application directory.",
-					OutputTarget.Console & OutputTarget.File);
+					OutputTarget.Console | OutputTarget.File);
 				return false;
 			}
 
@@ -66,32 +66,32 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.Config
 			catch (XPathException e)
 			{
 				_logger?.Log($"Error occured on reading params from Config: {e.Message}",
-					OutputTarget.Console & OutputTarget.File);
+					OutputTarget.Console | OutputTarget.File);
 				return false;
 			}
 			catch (XmlException e)
 			{
 				_logger?.Log($"Error occured on reading params Config: {e.Message}",
-					OutputTarget.Console & OutputTarget.File);
+					OutputTarget.Console | OutputTarget.File);
 				return false;
 			}
 			catch (IOException e)
 			{
 				_logger?.Log($"Error occured on reading file Config: {e.Message}",
-					OutputTarget.Console & OutputTarget.File);
+					OutputTarget.Console | OutputTarget.File);
 				return false;
 			}
 			catch (UnauthorizedAccessException e)
 			{
 				_logger?.Log($"Error occured on reading file Config: {e.Message}",
-					OutputTarget.Console & OutputTarget.File);
+					OutputTarget.Console | OutputTarget.File);
 				return false;
 			}
 
 			if (string.IsNullOrEmpty(UserName) || string.IsNullOrEmpty(UserPassword) ||
 			    string.IsNullOrEmpty(ServerAddress) || string.IsNullOrEmpty(TelegramBotToken))
 			{
-				_logger?.Log("Ensure, Config has correct parameters inside.", OutputTarget.Console & OutputTarget.File);
+				_logger?.Log("Ensure, Config has correct parameters inside.", OutputTarget.Console | OutputTarget.File);
 				return false;
 			}
 

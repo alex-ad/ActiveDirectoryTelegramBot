@@ -7,6 +7,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Models
 		public bool Enabled { get; set; }
 		public string Description { get; set; }
 		public string OS { get; set; }
+		public string IP { get; set; }
 		public DateTime LastLogon { get; set; }
 	}
 }
