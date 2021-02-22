@@ -1,5 +1,5 @@
 # ActiveDirectoryTelegramBot
-Informational TelegramBot for Active Directory
+Informational TelegramBot for Active Directory (alpha: sometimes testing and fixing)
 ***
 ## Features:
 * TelegramBot can retrieve some information abot the ActiveDirectory objects: users, computers, groups
@@ -45,4 +45,5 @@ You can find more information visiting [BotFather](https://t.me/botfather)
 - [ ] Hot reloading of the bot via chat-command
 - [ ] Modifiyng config via chat-commands
 - [ ] Add Admin who can modify and reload config
+- [ ] Search for user by a part of full name
 - [ ] and so on
