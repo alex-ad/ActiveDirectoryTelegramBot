@@ -119,8 +119,6 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 						ExtendedDN = ExtendedDN.Standard,
 						Tombstone = true
 					};
-					_directorySearcher.PropertiesToLoad.AddRange(
-						new[] {"lastknownparent", "whencreated", "whenchanged"});
 
 					_directorySearcher.DirectorySynchronization =
 						new DirectorySynchronization(DirectorySynchronizationOptions.ObjectSecurity);
