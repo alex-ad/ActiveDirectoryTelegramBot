@@ -167,6 +167,10 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 						case "objectguid":
 						case "adspath":
 						case "instancetype":
+						case "whenchanged":
+						case "lastlogontimestamp":
+						case "lastlogon":
+						case "pwdlastset":
 							break;
 						case "cn":
 						case "name":
