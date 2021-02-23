@@ -35,7 +35,7 @@ Informational TelegramBot for Active Directory (alpha: sometimes testing and fix
 ```
 ***
 ## How to get TelegramBot Token?
-You can find more information visiting [BotFather](https://t.me/botfather)
+You have to activate your own TelegramBot and retrieve there individual token. For more information visit [BotFather](https://t.me/botfather)
 ***
 ## TODO (may be... in version-2...)
 - [ ] Subsctibe to different types of Active Directory events (add, remove, modify)
