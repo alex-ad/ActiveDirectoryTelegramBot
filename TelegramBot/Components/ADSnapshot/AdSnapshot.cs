@@ -205,8 +205,7 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Components.ADSnapshot
 								ProcessDeleted(delta["distinguishedname"][0].ToString());
 								found = true;
 							}
-							else if (delta.Contains("parentguid") &&
-							         bool.TryParse(delta["parentguid"][0].ToString(), out var moved) && moved)
+							else if (delta.Contains("parentguid"))
 							{
 								ProcessMoved(delta["distinguishedname"][0].ToString());
 								found = true;

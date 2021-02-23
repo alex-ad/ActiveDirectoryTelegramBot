@@ -104,7 +104,8 @@ namespace AlexAd.ActiveDirectoryTelegramBot.Bot.Bot
 					val = $"({values[i]}) " + (AdType.UserAccountControl) int.Parse(values[i]);
 				else if (props[i] == "primarygroupid")
 					val = $"({values[i]}) " + (AdType.PrimaryGroupId) int.Parse(values[i]);
-				msg.AppendLine($"[{props[i]}] => {val}");
+				if (!string.IsNullOrEmpty(props[i]))
+					msg.AppendLine($"[{props[i]}] => {val}");
 			}
 
 			return msg.ToString();
