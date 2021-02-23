@@ -1,5 +1,5 @@
 # ActiveDirectoryTelegramBot
-Informational TelegramBot for Active Directory (alpha: sometimes testing and fixing)
+Informational TelegramBot for Active Directory (**alpha: sometimes testing and fixing**)
 ***
 ## Features:
 * TelegramBot can retrieve some information abot the ActiveDirectory objects: users, computers, groups
